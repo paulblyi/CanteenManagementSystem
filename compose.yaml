@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: canteen-postgres
+    environment:
+      POSTGRES_DB: CanteenDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - canteen-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend/CanteenApi
+      dockerfile: Dockerfile
+    container_name: canteen-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=CanteenDb;Username=postgres;Password=postgres
+    ports:
+      - "5000:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - canteen-network
+
+  frontend: # ← NEW
+    build:
+      context: ./frontend/canteen-app
+      dockerfile: Dockerfile
+    container_name: canteen-frontend
+    ports:
+      - "4200:80" # host:container
+    depends_on:
+      - backend
+    networks:
+      - canteen-network
+
+networks:
+  canteen-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

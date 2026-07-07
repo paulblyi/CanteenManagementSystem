@@ -1,0 +1,140 @@
+<div class="employee-portal">
+  <div class="portal-header">
+    <h2>Employee Portal</h2>
+    <button class="btn btn-primary" (click)="showRequestForm = !showRequestForm">
+      {{ showRequestForm ? 'Cancel' : '+ Request Meal Ticket' }}
+    </button>
+  </div>
+
+  <!-- Request Form -->
+  <div class="request-form" *ngIf="showRequestForm">
+    <h3>Request Meal Ticket</h3>
+    <form (ngSubmit)="requestTicket()">
+      <div class="form-group">
+        <label>Meal Type</label>
+        <select [(ngModel)]="request.mealType" name="mealType" required>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" [(ngModel)]="request.ticketDate" name="ticketDate" required
+               [min]="today">
+      </div>
+
+      <div class="form-group">
+        <label>Notes (Optional)</label>
+        <textarea [(ngModel)]="request.notes" name="notes" rows="2"
+                  placeholder="Any special requests?"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="showRequestForm = false">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'Submitting...' : 'Submit Request' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tickets List -->
+  <div class="tickets-section">
+    <h3>My Tickets</h3>
+    <div *ngIf="loading" class="loading">Loading...</div>
+    
+    <div *ngIf="!loading && tickets.length === 0" class="no-tickets">
+      <p>You haven't requested any meal tickets yet.</p>
+    </div>
+
+    <div class="ticket-grid">
+      <div *ngFor="let ticket of tickets" class="ticket-card"
+           [class.cancelled]="ticket.status === 'Cancelled'"
+           [class.redeemed]="ticket.status === 'Redeemed'">
+        <div class="ticket-header">
+          <span class="ticket-number">{{ ticket.ticketNumber }}</span>
+          <span class="ticket-status" [style.color]="getStatusColor(ticket.status)">
+            {{ getStatusIcon(ticket.status) }} {{ ticket.status }}
+          </span>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-detail">
+            <span class="label">Meal:</span>
+            <span class="value">{{ ticket.mealType }}</span>
+          </div>
+          <div class="ticket-detail">
+            <span class="label">Date:</span>
+            <span class="value">{{ ticket.ticketDate | date }}</span>
+          </div>
+          <div class="ticket-detail">
+            <span class="label">Department:</span>
+            <span class="value">{{ ticket.department }}</span>
+          </div>
+          <div *ngIf="ticket.qrCode" class="ticket-qr">
+            <span class="label">QR Code:</span>
+            <span class="value">{{ ticket.qrCode }}</span>
+          </div>
+        </div>
+        <div class="ticket-actions">
+          <button class="btn btn-info btn-sm" (click)="viewTicket(ticket)">
+            View Details
+          </button>
+          <button *ngIf="canCancel(ticket)" class="btn btn-danger btn-sm"
+                  (click)="cancelTicket(ticket.id)">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Detail Modal -->
+  <div class="modal-overlay" *ngIf="showTicketDetail && selectedTicket">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Ticket Details</h3>
+        <button class="close-btn" (click)="showTicketDetail = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-row">
+          <span class="label">Ticket Number:</span>
+          <span class="value">{{ selectedTicket.ticketNumber }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Meal Type:</span>
+          <span class="value">{{ selectedTicket.mealType }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Date:</span>
+          <span class="value">{{ selectedTicket.ticketDate | date:'fullDate' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value" [style.color]="getStatusColor(selectedTicket.status)">
+            {{ selectedTicket.status }}
+          </span>
+        </div>
+        <div class="detail-row" *ngIf="selectedTicket.requestedAt">
+          <span class="label">Requested:</span>
+          <span class="value">{{ selectedTicket.requestedAt | date:'medium' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedTicket.approvedAt">
+          <span class="label">Approved:</span>
+          <span class="value">{{ selectedTicket.approvedAt | date:'medium' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedTicket.redeemedAt">
+          <span class="label">Redeemed:</span>
+          <span class="value">{{ selectedTicket.redeemedAt | date:'medium' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="selectedTicket.notes">
+          <span class="label">Notes:</span>
+          <span class="value">{{ selectedTicket.notes }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

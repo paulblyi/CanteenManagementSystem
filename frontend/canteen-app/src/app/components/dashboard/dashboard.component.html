@@ -1,0 +1,143 @@
+<div class="dashboard">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <h2>🍽️ Canteen Management</h2>
+    </div>
+    <div class="nav-menu">
+      <span class="user-info">{{ user?.fullName }} ({{ user?.role }})</span>
+      <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <!-- Stats Cards -->
+    <div class="stats-grid" *ngIf="!loading && stats">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.todayTicketsIssued }}</div>
+          <div class="stat-label">Today's Tickets</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.todayTicketsRedeemed }}</div>
+          <div class="stat-label">Redeemed Today</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-value">${{ stats.todayRevenue.toFixed(2) }}</div>
+          <div class="stat-label">Today's Revenue</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ stats.activeEmployees }}</div>
+          <div class="stat-label">Active Employees</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <button *ngIf="hasAnyRole(['Employee', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/employee']">
+          📝 Request Meal
+        </button>
+
+        <button *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/humancapital']">
+          👥 Manage Tickets
+        </button>
+
+        <button *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/batch']">
+          📦 Create Batch
+        </button>
+
+        <button *ngIf="hasAnyRole(['Chef', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/chef']">
+          🔍 Validate Ticket
+        </button>
+
+        <button *ngIf="hasAnyRole(['Finance', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/reconciliation']">
+          🔄 Reconciliation
+        </button>
+
+        <button *ngIf="hasAnyRole(['Finance', 'Admin'])"
+                class="action-btn"
+                [routerLink]="['/reports']">
+          📊 Reports
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="recent-activities" *ngIf="!loading && stats">
+      <h3>Recent Activities</h3>
+      <div class="activity-list">
+        <div *ngFor="let activity of stats.recentActivities" class="activity-item">
+          <span class="activity-icon">{{ getActivityIcon(activity.activityType) }}</span>
+          <div class="activity-details">
+            <div class="activity-description">{{ activity.description }}</div>
+            <div class="activity-meta">
+              <span class="activity-user">{{ activity.user }}</span>
+              <span class="activity-time">{{ activity.timestamp | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="stats.recentActivities.length === 0" class="no-activities">
+          No recent activities
+        </div>
+      </div>
+    </div>
+
+    <!-- Meal Type Stats -->
+    <div class="meal-stats" *ngIf="!loading && stats">
+      <h3>Meal Type Statistics</h3>
+      <div class="meal-grid">
+        <div class="meal-card breakfast">
+          <div class="meal-icon">🌅</div>
+          <div class="meal-info">
+            <div class="meal-name">Breakfast</div>
+            <div class="meal-count">{{ stats.mealTypeStats.breakfastCount }} served</div>
+            <div class="meal-revenue">${{ stats.mealTypeStats.breakfastRevenue.toFixed(2) }}</div>
+          </div>
+        </div>
+
+        <div class="meal-card lunch">
+          <div class="meal-icon">🌞</div>
+          <div class="meal-info">
+            <div class="meal-name">Lunch</div>
+            <div class="meal-count">{{ stats.mealTypeStats.lunchCount }} served</div>
+            <div class="meal-revenue">${{ stats.mealTypeStats.lunchRevenue.toFixed(2) }}</div>
+          </div>
+        </div>
+
+        <div class="meal-card dinner">
+          <div class="meal-icon">🌙</div>
+          <div class="meal-info">
+            <div class="meal-name">Dinner</div>
+            <div class="meal-count">{{ stats.mealTypeStats.dinnerCount }} served</div>
+            <div class="meal-revenue">${{ stats.mealTypeStats.dinnerRevenue.toFixed(2) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

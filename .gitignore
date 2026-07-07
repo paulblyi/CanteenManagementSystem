@@ -1,0 +1,43 @@
+# Angular / Node
+node_modules/
+dist/
+.angular/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.db
+*.cache
+*.tmp
+
+# Docker
+.postgres_data/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment / Secrets
+appsettings.Development.json
+.env
+*.local.json
+*.secret.json
+
+# Build outputs
+*.dll
+*.exe
+*.pdb
+
+# Migrations (optional – you might want to keep them)
+# Migrations/   # uncomment to ignore generated migrations if you prefer

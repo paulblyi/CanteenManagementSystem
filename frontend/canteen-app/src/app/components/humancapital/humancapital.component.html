@@ -1,0 +1,206 @@
+<div class="hc-portal">
+  <div class="portal-header">
+    <h2>Human Capital Portal</h2>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="showBatchForm = !showBatchForm">
+        {{ showBatchForm ? "Cancel" : "+ Create Batch" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Batch Creation Form -->
+  <div class="batch-form" *ngIf="showBatchForm">
+    <h3>Create Batch Tickets</h3>
+    <form (ngSubmit)="createBatch()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Meal Type</label>
+          <select
+            [(ngModel)]="batchRequest.mealType"
+            name="batchMealType"
+            required
+          >
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Date</label>
+          <input
+            type="date"
+            [(ngModel)]="batchRequest.ticketDate"
+            name="batchDate"
+            required
+            [min]="today"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Department (Optional)</label>
+        <input
+          type="text"
+          [(ngModel)]="batchRequest.department"
+          name="batchDepartment"
+          placeholder="e.g., IT Department"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Select Employees</label>
+        <div class="employee-selector">
+          <!-- Use a template reference variable to avoid event casting -->
+          <select
+            #empSelect
+            (change)="addEmployeeById(empSelect.value)"
+            class="form-control employee-dropdown"
+          >
+            <option value="">-- Select Employee --</option>
+            <option *ngFor="let emp of getMockEmployees()" [value]="emp.id">
+              {{ emp.fullName }} ({{ emp.department }})
+            </option>
+          </select>
+          <div class="selected-employees">
+            <span *ngFor="let emp of selectedEmployees" class="employee-tag">
+              {{ emp.fullName }}
+              <button
+                type="button"
+                class="remove-btn"
+                (click)="removeEmployee(emp)"
+              >
+                ✕
+              </button>
+            </span>
+            <span *ngIf="selectedEmployees.length === 0" class="no-selection">
+              No employees selected
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="showBatchForm = false"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-success"
+          [disabled]="loading || selectedEmployees.length === 0"
+        >
+          {{
+            loading
+              ? "Creating..."
+              : "Create Batch (" + selectedEmployees.length + " employees)"
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Pending Tickets -->
+  <div class="section">
+    <h3>Pending Tickets</h3>
+    <div *ngIf="loading" class="loading">Loading...</div>
+
+    <div *ngIf="!loading && pendingTickets.length === 0" class="empty-state">
+      No pending tickets to approve.
+    </div>
+
+    <div class="ticket-list">
+      <div *ngFor="let ticket of pendingTickets" class="ticket-item">
+        <div class="ticket-info">
+          <div class="ticket-header">
+            <span class="ticket-number">{{ ticket.ticketNumber }}</span>
+            <span
+              class="ticket-status"
+              [style.color]="getStatusColor(ticket.status)"
+            >
+              {{ getStatusIcon(ticket.status) }} {{ ticket.status }}
+            </span>
+          </div>
+          <div class="ticket-details">
+            <span><strong>Employee:</strong> {{ ticket.employeeName }}</span>
+            <span><strong>Department:</strong> {{ ticket.department }}</span>
+            <span><strong>Meal:</strong> {{ ticket.mealType }}</span>
+            <span><strong>Date:</strong> {{ ticket.ticketDate | date }}</span>
+          </div>
+          <div *ngIf="ticket.notes" class="ticket-notes">
+            <strong>Notes:</strong> {{ ticket.notes }}
+          </div>
+        </div>
+        <div class="ticket-actions">
+          <button
+            class="btn btn-success"
+            (click)="approveTicket(ticket.id, 'Approved')"
+          >
+            ✅ Approve
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="approveTicket(ticket.id, 'Rejected')"
+          >
+            ❌ Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batches -->
+  <div class="section">
+    <h3>Batches</h3>
+    <div *ngIf="batches.length === 0" class="empty-state">
+      No batches created yet.
+    </div>
+
+    <div class="batch-grid">
+      <div *ngFor="let batch of batches" class="batch-card">
+        <div class="batch-header">
+          <span class="batch-number">{{ batch.batchNumber }}</span>
+          <span
+            class="batch-status"
+            [style.color]="getStatusColor(batch.status)"
+          >
+            {{ getStatusIcon(batch.status) }} {{ batch.status }}
+          </span>
+        </div>
+        <div class="batch-body">
+          <div class="batch-detail">
+            <span class="label">Meal:</span>
+            <span class="value">{{ batch.mealType }}</span>
+          </div>
+          <div class="batch-detail">
+            <span class="label">Date:</span>
+            <span class="value">{{ batch.ticketDate | date }}</span>
+          </div>
+          <div class="batch-detail">
+            <span class="label">Tickets:</span>
+            <span class="value">{{ batch.totalTickets }}</span>
+          </div>
+          <div class="batch-detail" *ngIf="batch.department">
+            <span class="label">Department:</span>
+            <span class="value">{{ batch.department }}</span>
+          </div>
+        </div>
+        <div class="batch-actions">
+          <button class="btn btn-info btn-sm" (click)="viewBatch(batch)">
+            View Tickets
+          </button>
+          <button
+            *ngIf="batch.status === 'Active'"
+            class="btn btn-danger btn-sm"
+            (click)="cancelBatch(batch.id)"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

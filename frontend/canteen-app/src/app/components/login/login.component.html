@@ -1,0 +1,54 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Canteen Management System</h1>
+      <p>Please sign in to continue</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          [(ngModel)]="username"
+          name="username"
+          class="form-control"
+          placeholder="Enter your username"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          class="form-control"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
+        <span *ngIf="loading">Loading...</span>
+        <span *ngIf="!loading">Sign In</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Demo Credentials:</p>
+      <small>Admin: admin / Admin@123</small><br>
+      <small>Employee: employee / Employee@123</small><br>
+      <small>HC: hc / HC@123</small><br>
+      <small>Chef: chef / Chef@123</small>
+    </div>
+  </div>
+</div>
