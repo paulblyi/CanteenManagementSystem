@@ -1,5 +1,6 @@
 using CanteenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CanteenApi.Data
 {
@@ -20,6 +21,20 @@ namespace CanteenApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Global converter for all DateTime properties to UTC
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
+                            v => v.ToUniversalTime(),                           // write: convert to UTC
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));   // read: mark as UTC
+                    }
+                }
+            }
 
             // Unique constraints
             modelBuilder.Entity<User>()

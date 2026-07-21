@@ -1,0 +1,195 @@
+<div class="reconciliation-portal">
+  <h2>Reconciliation Engine</h2>
+
+  <div class="actions-bar">
+    <div class="date-picker">
+      <label>Select Date:</label>
+      <input type="date" [(ngModel)]="selectedDate" [value]="today" />
+      <button class="btn btn-primary" (click)="reconcileDate()">
+        Run Reconciliation
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Processing...</div>
+
+  <div *ngIf="currentReconciliation" class="reconciliation-summary">
+    <h3>
+      Reconciliation Summary -
+      {{ currentReconciliation.reconciliationDate | date: "fullDate" }}
+    </h3>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="label">Total Issued</div>
+        <div class="value">{{ currentReconciliation.totalTicketsIssued }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Total Redeemed</div>
+        <div class="value">
+          {{ currentReconciliation.totalTicketsRedeemed }}
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="label">Pending</div>
+        <div class="value">{{ currentReconciliation.totalTicketsPending }}</div>
+      </div>
+      <div
+        class="summary-item"
+        [class.has-variance]="currentReconciliation.variance > 0"
+      >
+        <div class="label">Variance</div>
+        <div class="value">{{ currentReconciliation.variance }}</div>
+      </div>
+    </div>
+
+    <div class="meal-breakdown">
+      <h4>Meal Type Breakdown</h4>
+      <table class="breakdown-table">
+        <thead>
+          <tr>
+            <th>Meal Type</th>
+            <th>Issued</th>
+            <th>Redeemed</th>
+            <th>Pending</th>
+            <th>Variance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Breakfast</td>
+            <td>{{ currentReconciliation.breakfast.issued }}</td>
+            <td>{{ currentReconciliation.breakfast.redeemed }}</td>
+            <td>{{ currentReconciliation.breakfast.pending }}</td>
+            <td
+              [class.has-variance]="
+                currentReconciliation.breakfast.variance > 0
+              "
+            >
+              {{ currentReconciliation.breakfast.variance }}
+            </td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>{{ currentReconciliation.lunch.issued }}</td>
+            <td>{{ currentReconciliation.lunch.redeemed }}</td>
+            <td>{{ currentReconciliation.lunch.pending }}</td>
+            <td [class.has-variance]="currentReconciliation.lunch.variance > 0">
+              {{ currentReconciliation.lunch.variance }}
+            </td>
+          </tr>
+          <tr>
+            <td>Dinner</td>
+            <td>{{ currentReconciliation.dinner.issued }}</td>
+            <td>{{ currentReconciliation.dinner.redeemed }}</td>
+            <td>{{ currentReconciliation.dinner.pending }}</td>
+            <td
+              [class.has-variance]="currentReconciliation.dinner.variance > 0"
+            >
+              {{ currentReconciliation.dinner.variance }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="currentReconciliation.variance > 0" class="variance-details">
+      <h4>Variance Details</h4>
+      <button class="btn btn-info" (click)="loadVarianceDetails()">
+        View Variance Details
+      </button>
+
+      <div *ngIf="varianceDetails.length > 0">
+        <table class="variance-table">
+          <thead>
+            <tr>
+              <th>Ticket Number</th>
+              <th>Employee</th>
+              <th>Department</th>
+              <th>Meal Type</th>
+              <th>Variance Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of varianceDetails">
+              <td>{{ detail.ticketNumber }}</td>
+              <td>{{ detail.employeeName }}</td>
+              <td>{{ detail.department }}</td>
+              <td>{{ detail.mealType }}</td>
+              <td>
+                <span class="variance-type">{{ detail.varianceType }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div
+      class="reconciliation-actions"
+      *ngIf="currentReconciliation.status === 'Pending'"
+    >
+      <button class="btn btn-success" (click)="completeReconciliation()">
+        Complete Reconciliation
+      </button>
+      <button class="btn btn-secondary" (click)="autoReconcile()">
+        Auto-Reconcile
+      </button>
+    </div>
+
+    <div
+      *ngIf="currentReconciliation.status === 'Completed'"
+      class="completed-status"
+    >
+      ✅ Reconciliation Completed
+      <span *ngIf="currentReconciliation.reconciledBy">
+        by {{ currentReconciliation.reconciledBy }} at
+        {{ currentReconciliation.reconciledAt | date: "medium" }}
+      </span>
+    </div>
+  </div>
+
+  <div class="reconciliation-history">
+    <h3>Reconciliation History</h3>
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Issued</th>
+          <th>Redeemed</th>
+          <th>Variance</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let recon of reconciliations">
+          <td>{{ recon.reconciliationDate | date }}</td>
+          <td>{{ recon.totalTicketsIssued }}</td>
+          <td>{{ recon.totalTicketsRedeemed }}</td>
+          <td [class.has-variance]="recon.variance > 0">
+            {{ recon.variance }}
+          </td>
+          <td>
+            <span
+              class="status-badge"
+              [class.completed]="recon.status === 'Completed'"
+              [class.pending]="recon.status === 'Pending'"
+              [class.variance]="recon.status === 'Variance'"
+            >
+              {{ recon.status }}
+            </span>
+          </td>
+          <td>
+            <button
+              class="btn btn-sm btn-info"
+              (click)="viewReconciliation(recon.id)"
+            >
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

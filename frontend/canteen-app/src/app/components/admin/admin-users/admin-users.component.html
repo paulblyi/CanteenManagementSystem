@@ -1,0 +1,112 @@
+<div class="admin-users">
+  <h2>User Management</h2>
+  <button class="btn btn-primary" (click)="showAddForm = !showAddForm">
+    {{ showAddForm ? "Cancel" : "+ Add User" }}
+  </button>
+
+  <!-- Add User Form -->
+  <div *ngIf="showAddForm" class="add-form">
+    <h3>Create New User</h3>
+    <form (ngSubmit)="createUser()">
+      <div class="form-group">
+        <label>Username</label>
+        <input
+          type="text"
+          [(ngModel)]="newUser.username"
+          name="username"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="password"
+          [(ngModel)]="newUser.password"
+          name="password"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          [(ngModel)]="newUser.fullName"
+          name="fullName"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="newUser.email" name="email" />
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select [(ngModel)]="newUser.role" name="role">
+          <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Department</label>
+        <input type="text" [(ngModel)]="newUser.department" name="department" />
+      </div>
+      <div class="form-group">
+        <label>Employee Code</label>
+        <input
+          type="text"
+          [(ngModel)]="newUser.employeeCode"
+          name="employeeCode"
+        />
+      </div>
+      <button type="submit" class="btn btn-success">Create</button>
+    </form>
+  </div>
+
+  <!-- User Table -->
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <table *ngIf="!loading" class="user-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Department</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <select
+            (change)="changeRole(user, $event.target.value)"
+            [value]="user.role"
+          >
+            <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+          </select>
+        </td>
+        <td>{{ user.department }}</td>
+        <td>
+          <button
+            class="btn btn-sm"
+            [class.btn-success]="user.isActive"
+            [class.btn-danger]="!user.isActive"
+            (click)="toggleActive(user)"
+          >
+            {{ user.isActive ? "Active" : "Inactive" }}
+          </button>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-warning" (click)="resetPassword(user)">
+            Reset Password
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

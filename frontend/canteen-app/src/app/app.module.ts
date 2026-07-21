@@ -25,6 +25,7 @@ import { GlobalErrorHandler } from "./error-handler";
 
 // Optional but Recommended
 import { APP_BASE_HREF } from "@angular/common";
+import { ChangePasswordComponent } from "./components/profile/change-password.component";
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { APP_BASE_HREF } from "@angular/common";
     ChefComponent,
     ReconciliationComponent,
     ReportsComponent,
+    ChangePasswordComponent,
   ],
 
   imports: [

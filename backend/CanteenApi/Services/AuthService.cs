@@ -100,5 +100,99 @@ namespace CanteenApi.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        // Additional methods for user management
+        public async Task<List<UserListDto>> GetUsersAsync()
+        {
+            var users = await _context.Users
+                .OrderBy(u => u.Username)
+                .ToListAsync();
+            return users.Select(u => new UserListDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                FullName = u.FullName,
+                Email = u.Email,
+                Role = u.Role,
+                Department = u.Department,
+                IsActive = u.IsActive,
+                CreatedAt = u.CreatedAt
+            }).ToList();
+        }
+
+        public async Task<UserListDto> CreateUserAsync(CreateUserRequest request)
+        {
+            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+                throw new InvalidOperationException("Username already exists.");
+
+            var user = new User
+            {
+                Username = request.Username,
+                PasswordHash = HashPassword(request.Password),
+                FullName = request.FullName,
+                Email = request.Email,
+                Role = request.Role,
+                Department = request.Department,
+                EmployeeCode = request.EmployeeCode,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return MapToUserListDto(user);
+        }
+
+        public async Task<bool> ToggleUserActiveAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+            user.IsActive = !user.IsActive;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateUserRoleAsync(int userId, string newRole)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+            user.Role = newRole;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ResetUserPasswordAsync(int userId, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+            user.PasswordHash = HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ChangePasswordAsync(int userId, string currentPassword, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+            if (!VerifyPassword(currentPassword, user.PasswordHash)) return false;
+            user.PasswordHash = HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private UserListDto MapToUserListDto(User user)
+        {
+            return new UserListDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                FullName = user.FullName,
+                Email = user.Email,
+                Role = user.Role,
+                Department = user.Department,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt
+            };
+        } // helper
+
     }
 }

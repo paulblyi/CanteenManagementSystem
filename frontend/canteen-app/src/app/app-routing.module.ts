@@ -10,6 +10,10 @@ import { ChefComponent } from "./components/chef/chef.component";
 import { ReconciliationComponent } from "./components/reconciliation/reconciliation.component";
 import { ReportsComponent } from "./components/reports/reports.component";
 
+// Additional imports for admin components
+import { AdminUsersComponent } from "./components/admin/admin-users/admin-users.component";
+import { ChangePasswordComponent } from "./components/profile/change-password.component";
+
 const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
@@ -49,7 +53,23 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ["Finance", "Admin"] },
   },
-  { path: "**", redirectTo: "/dashboard" },
+  {
+    path: "**",
+    redirectTo: "/dashboard",
+  },
+
+  // Admin routes
+  {
+    path: "admin/users",
+    component: AdminUsersComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ["Admin"] },
+  },
+  {
+    path: "profile/change-password",
+    component: ChangePasswordComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({

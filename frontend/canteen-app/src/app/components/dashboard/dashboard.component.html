@@ -49,39 +49,51 @@
     <div class="quick-actions">
       <h3>Quick Actions</h3>
       <div class="action-grid">
-        <button *ngIf="hasAnyRole(['Employee', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/employee']">
+        <button
+          *ngIf="hasAnyRole(['Employee', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/employee']"
+        >
           📝 Request Meal
         </button>
 
-        <button *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/humancapital']">
+        <button
+          *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/humancapital']"
+        >
           👥 Manage Tickets
         </button>
 
-        <button *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/batch']">
+        <button
+          *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/batch']"
+        >
           📦 Create Batch
         </button>
 
-        <button *ngIf="hasAnyRole(['Chef', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/chef']">
+        <button
+          *ngIf="hasAnyRole(['Chef', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/chef']"
+        >
           🔍 Validate Ticket
         </button>
 
-        <button *ngIf="hasAnyRole(['Finance', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/reconciliation']">
+        <button
+          *ngIf="hasAnyRole(['Finance', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/reconciliation']"
+        >
           🔄 Reconciliation
         </button>
 
-        <button *ngIf="hasAnyRole(['Finance', 'Admin'])"
-                class="action-btn"
-                [routerLink]="['/reports']">
+        <button
+          *ngIf="hasAnyRole(['Finance', 'Admin'])"
+          class="action-btn"
+          [routerLink]="['/reports']"
+        >
           📊 Reports
         </button>
       </div>
@@ -91,13 +103,20 @@
     <div class="recent-activities" *ngIf="!loading && stats">
       <h3>Recent Activities</h3>
       <div class="activity-list">
-        <div *ngFor="let activity of stats.recentActivities" class="activity-item">
-          <span class="activity-icon">{{ getActivityIcon(activity.activityType) }}</span>
+        <div
+          *ngFor="let activity of stats.recentActivities"
+          class="activity-item"
+        >
+          <span class="activity-icon">{{
+            getActivityIcon(activity.activityType)
+          }}</span>
           <div class="activity-details">
             <div class="activity-description">{{ activity.description }}</div>
             <div class="activity-meta">
               <span class="activity-user">{{ activity.user }}</span>
-              <span class="activity-time">{{ activity.timestamp | date:'short' }}</span>
+              <span class="activity-time">{{
+                activity.timestamp | date: "short"
+              }}</span>
             </div>
           </div>
         </div>
@@ -115,8 +134,12 @@
           <div class="meal-icon">🌅</div>
           <div class="meal-info">
             <div class="meal-name">Breakfast</div>
-            <div class="meal-count">{{ stats.mealTypeStats.breakfastCount }} served</div>
-            <div class="meal-revenue">${{ stats.mealTypeStats.breakfastRevenue.toFixed(2) }}</div>
+            <div class="meal-count">
+              {{ stats.mealTypeStats.breakfastCount }} served
+            </div>
+            <div class="meal-revenue">
+              ${{ stats.mealTypeStats.breakfastRevenue.toFixed(2) }}
+            </div>
           </div>
         </div>
 
@@ -124,8 +147,12 @@
           <div class="meal-icon">🌞</div>
           <div class="meal-info">
             <div class="meal-name">Lunch</div>
-            <div class="meal-count">{{ stats.mealTypeStats.lunchCount }} served</div>
-            <div class="meal-revenue">${{ stats.mealTypeStats.lunchRevenue.toFixed(2) }}</div>
+            <div class="meal-count">
+              {{ stats.mealTypeStats.lunchCount }} served
+            </div>
+            <div class="meal-revenue">
+              ${{ stats.mealTypeStats.lunchRevenue.toFixed(2) }}
+            </div>
           </div>
         </div>
 
@@ -133,9 +160,19 @@
           <div class="meal-icon">🌙</div>
           <div class="meal-info">
             <div class="meal-name">Dinner</div>
-            <div class="meal-count">{{ stats.mealTypeStats.dinnerCount }} served</div>
-            <div class="meal-revenue">${{ stats.mealTypeStats.dinnerRevenue.toFixed(2) }}</div>
+            <div class="meal-count">
+              {{ stats.mealTypeStats.dinnerCount }} served
+            </div>
+            <div class="meal-revenue">
+              ${{ stats.mealTypeStats.dinnerRevenue.toFixed(2) }}
+            </div>
           </div>
+        </div>
+        <div *ngIf="hasRole('Admin')" class="nav-item">
+          <a routerLink="/admin/users">Manage Users</a>
+        </div>
+        <div class="nav-item">
+          <a routerLink="/profile/change-password">Change Password</a>
         </div>
       </div>
     </div>

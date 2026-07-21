@@ -1,0 +1,106 @@
+.reports-portal {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+h2 {
+  color: #333;
+  margin-bottom: 30px;
+}
+.report-filters {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: end;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.filter-group label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #555;
+}
+.filter-group select,
+.filter-group input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+.btn-success:hover {
+  background: #218838;
+}
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+.report-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+.stat-box {
+  text-align: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.stat-box .stat-label {
+  color: #888;
+  font-size: 13px;
+}
+.stat-box .stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+.report-table th {
+  background: #f8f9fa;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #dee2e6;
+}
+.report-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+.meal-breakdown,
+.department-breakdown,
+.top-employees {
+  margin: 20px 0;
+}
+h4 {
+  color: #555;
+  margin-bottom: 10px;
+}

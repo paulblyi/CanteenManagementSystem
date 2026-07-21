@@ -3,7 +3,7 @@ export interface User {
   username: string;
   fullName: string;
   email?: string;
-  role: 'Employee' | 'HumanCapital' | 'Chef' | 'Admin' | 'Finance';
+  role: "Employee" | "HumanCapital" | "Chef" | "Admin" | "Finance";
   department?: string;
   employeeCode?: string;
   isActive: boolean;
@@ -31,4 +31,39 @@ export interface RegisterRequest {
   role: string;
   department?: string;
   employeeCode?: string;
+}
+
+// Additional for user management
+export interface UserListDto {
+  id: number;
+  username: string;
+  fullName: string;
+  email?: string;
+  role: string;
+  department?: string;
+  isActive: boolean;
+  createdAt: Date;
+}
+
+export interface CreateUserRequest {
+  username: string;
+  password: string;
+  fullName: string;
+  email?: string;
+  role: string;
+  department?: string;
+  employeeCode?: string;
+}
+
+export interface UpdateRoleRequest {
+  role: string;
+}
+
+export interface ResetPasswordRequest {
+  newPassword: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
 }

@@ -6,10 +6,10 @@ namespace CanteenApi.DTOs
     {
         [Required]
         public DateTime TicketDate { get; set; }
-        
+
         [Required]
         public string MealType { get; set; } = "Lunch";
-        
+
         public string? Notes { get; set; }
     }
 
@@ -40,7 +40,13 @@ namespace CanteenApi.DTOs
     {
         [Required]
         public string TicketNumber { get; set; } = string.Empty;
-        
+
         public string? VerificationMethod { get; set; } = "Manual";
+    }
+    public class RecentRedemptionDto
+    {
+        public string TicketNumber { get; set; } = string.Empty;
+        public string EmployeeName { get; set; } = string.Empty;
+        public DateTime RedeemedAt { get; set; }
     }
 }

@@ -1,0 +1,67 @@
+<div class="chef-portal">
+  <h2>Chef Portal - Meal Redemption</h2>
+
+  <div class="validation-section">
+    <h3>Validate Ticket</h3>
+    <div class="validation-form">
+      <div class="form-group">
+        <label>Enter Ticket Number</label>
+        <input
+          type="text"
+          [(ngModel)]="ticketNumber"
+          placeholder="e.g., TKT-20260701-ABC123"
+          (keyup.enter)="validateTicket()"
+        />
+      </div>
+      <button class="btn btn-primary" (click)="validateTicket()">
+        Validate
+      </button>
+    </div>
+
+    <div *ngIf="validationResult" class="validation-result">
+      <div
+        [class.valid]="validationResult.isValid"
+        [class.invalid]="!validationResult.isValid"
+      >
+        <h4>
+          {{
+            validationResult.isValid ? "✅ Valid Ticket" : "❌ Invalid Ticket"
+          }}
+        </h4>
+        <p>{{ validationResult.message }}</p>
+        <div *ngIf="validationResult.ticket" class="ticket-info">
+          <div>
+            <strong>Employee:</strong>
+            {{ validationResult.ticket.employeeName }}
+          </div>
+          <div>
+            <strong>Meal:</strong> {{ validationResult.ticket.mealType }}
+          </div>
+          <div>
+            <strong>Department:</strong>
+            {{ validationResult.ticket.department }}
+          </div>
+        </div>
+        <button
+          *ngIf="validationResult.isValid"
+          class="btn btn-success mt-20"
+          (click)="redeemTicket()"
+        >
+          Redeem Ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="recent-redemptions">
+    <h3>Recent Redemptions</h3>
+    <div *ngIf="recentRedemptions.length === 0" class="empty-state">
+      No recent redemptions
+    </div>
+    <div *ngFor="let redemption of recentRedemptions" class="redemption-item">
+      <span class="ticket-number">{{ redemption.ticketNumber }}</span>
+      <span class="employee">{{ redemption.employeeName }}</span>
+      <span class="time">{{ redemption.redeemedAt | date: "short" }}</span>
+    </div>
+  </div>
+</div>

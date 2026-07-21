@@ -1,0 +1,101 @@
+.chef-portal {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.validation-section {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.validation-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.validation-form .form-group {
+  flex: 1;
+}
+.validation-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+.btn-success:hover {
+  background: #218838;
+}
+.validation-result {
+  margin-top: 20px;
+}
+.validation-result .valid {
+  padding: 15px;
+  background: #d4edda;
+  border-radius: 6px;
+  border: 1px solid #c3e6cb;
+}
+.validation-result .invalid {
+  padding: 15px;
+  background: #f8d7da;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+}
+.ticket-info {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+.ticket-info div {
+  padding: 4px 0;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.recent-redemptions {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.redemption-item {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+.redemption-item:last-child {
+  border-bottom: none;
+}
+.ticket-number {
+  font-weight: bold;
+  color: #333;
+}
+.employee {
+  color: #666;
+}
+.time {
+  color: #999;
+  font-size: 12px;
+}
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}

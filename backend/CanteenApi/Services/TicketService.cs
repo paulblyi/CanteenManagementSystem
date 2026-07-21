@@ -18,9 +18,9 @@ namespace CanteenApi.Services
         {
             // Check if employee already has a ticket for this date and meal
             var existingTicket = await _context.MealTickets
-                .FirstOrDefaultAsync(t => t.EmployeeId == employeeId 
-                    && t.TicketDate.Date == request.TicketDate.Date 
-                    && t.MealType == request.MealType 
+                .FirstOrDefaultAsync(t => t.EmployeeId == employeeId
+                    && t.TicketDate.Date == request.TicketDate.Date
+                    && t.MealType == request.MealType
                     && t.Status != "Cancelled");
 
             if (existingTicket != null)
@@ -169,6 +169,24 @@ namespace CanteenApi.Services
                 RedeemedAt = ticket.RedeemedAt,
                 QRCode = ticket.QRCode
             };
+        }
+
+
+        public async Task<List<RecentRedemptionDto>> GetRecentRedemptionsAsync(int count = 10)
+        {
+            var redemptions = await _context.RedemptionLogs
+                .Include(r => r.Employee)
+                .OrderByDescending(r => r.RedemptionTime)
+                .Take(count)
+                .Select(r => new RecentRedemptionDto
+                {
+                    TicketNumber = r.TicketNumber,
+                    EmployeeName = r.Employee != null ? r.Employee.FullName : "Unknown",
+                    RedeemedAt = r.RedemptionTime
+                })
+                .ToListAsync();
+
+            return redemptions;
         }
     }
 }

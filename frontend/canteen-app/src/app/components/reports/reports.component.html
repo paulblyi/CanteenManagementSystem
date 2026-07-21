@@ -1,0 +1,176 @@
+<div class="reports-portal">
+  <h2>Reports & Dashboard</h2>
+
+  <div class="report-filters">
+    <div class="filter-group">
+      <label>Report Type</label>
+      <select [(ngModel)]="reportType" (change)="loadReport()">
+        <option value="daily">Daily Report</option>
+        <option value="monthly">Monthly Report</option>
+        <option value="department">Department Report</option>
+      </select>
+    </div>
+
+    <div class="filter-group" *ngIf="reportType === 'daily'">
+      <label>Date</label>
+      <input type="date" [(ngModel)]="selectedDate" (change)="loadReport()" />
+    </div>
+
+    <div class="filter-group" *ngIf="reportType === 'monthly'">
+      <label>Month</label>
+      <input type="month" [(ngModel)]="selectedMonth" (change)="loadReport()" />
+    </div>
+
+    <div class="filter-group" *ngIf="reportType === 'department'">
+      <label>Start Date</label>
+      <input type="date" [(ngModel)]="startDate" (change)="loadReport()" />
+      <label>End Date</label>
+      <input type="date" [(ngModel)]="endDate" (change)="loadReport()" />
+    </div>
+
+    <button class="btn btn-success" (click)="exportReport()">
+      📊 Export Report
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading report...</div>
+
+  <!-- Daily Report -->
+  <div *ngIf="reportType === 'daily' && dailyReport" class="report-content">
+    <h3>Daily Report - {{ dailyReport.date | date: "fullDate" }}</h3>
+
+    <div class="report-stats">
+      <div class="stat-box">
+        <div class="stat-label">Total Issued</div>
+        <div class="stat-value">{{ dailyReport.totalTicketsIssued }}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Total Redeemed</div>
+        <div class="stat-value">{{ dailyReport.totalTicketsRedeemed }}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">${{ dailyReport.totalRevenue.toFixed(2) }}</div>
+      </div>
+    </div>
+
+    <div class="meal-breakdown">
+      <h4>Meal Type Breakdown</h4>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Meal Type</th>
+            <th>Issued</th>
+            <th>Redeemed</th>
+            <th>Pending</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Breakfast</td>
+            <td>{{ dailyReport.breakfastIssued }}</td>
+            <td>{{ dailyReport.breakfastRedeemed }}</td>
+            <td>{{ dailyReport.breakfastPending }}</td>
+            <td>${{ dailyReport.breakfastRevenue.toFixed(2) }}</td>
+          </tr>
+          <tr>
+            <td>Lunch</td>
+            <td>{{ dailyReport.lunchIssued }}</td>
+            <td>{{ dailyReport.lunchRedeemed }}</td>
+            <td>{{ dailyReport.lunchPending }}</td>
+            <td>${{ dailyReport.lunchRevenue.toFixed(2) }}</td>
+          </tr>
+          <tr>
+            <td>Dinner</td>
+            <td>{{ dailyReport.dinnerIssued }}</td>
+            <td>{{ dailyReport.dinnerRedeemed }}</td>
+            <td>{{ dailyReport.dinnerPending }}</td>
+            <td>${{ dailyReport.dinnerRevenue.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      *ngIf="dailyReport.departmentBreakdown.length > 0"
+      class="department-breakdown"
+    >
+      <h4>Department Breakdown</h4>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Department</th>
+            <th>Employees</th>
+            <th>Issued</th>
+            <th>Redeemed</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dept of dailyReport.departmentBreakdown">
+            <td>{{ dept.department }}</td>
+            <td>{{ dept.totalEmployees }}</td>
+            <td>{{ dept.ticketsIssued }}</td>
+            <td>{{ dept.ticketsRedeemed }}</td>
+            <td>${{ dept.totalCost.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="dailyReport.topEmployees.length > 0" class="top-employees">
+      <h4>Top Employees</h4>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Department</th>
+            <th>Meals</th>
+            <th>Favorite Meal</th>
+            <th>Total Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of dailyReport.topEmployees">
+            <td>{{ emp.employeeName }}</td>
+            <td>{{ emp.department }}</td>
+            <td>{{ emp.totalTickets }}</td>
+            <td>{{ emp.favoriteMeal }}</td>
+            <td>${{ emp.totalCost.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Department Report -->
+  <div
+    *ngIf="reportType === 'department' && departmentReport"
+    class="report-content"
+  >
+    <h3>Department Report</h3>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th>Employees</th>
+          <th>Issued</th>
+          <th>Redeemed</th>
+          <th>Total Cost</th>
+          <th>Cost/Employee</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dept of departmentReport">
+          <td>{{ dept.department }}</td>
+          <td>{{ dept.totalEmployees }}</td>
+          <td>{{ dept.ticketsIssued }}</td>
+          <td>{{ dept.ticketsRedeemed }}</td>
+          <td>${{ dept.totalCost.toFixed(2) }}</td>
+          <td>${{ dept.costPerEmployee.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
