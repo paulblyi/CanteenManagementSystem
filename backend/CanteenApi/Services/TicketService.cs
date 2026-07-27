@@ -35,7 +35,7 @@ namespace CanteenApi.Services
                 TicketNumber = GenerateTicketNumber(),
                 EmployeeId = employeeId,
                 EmployeeName = employee.FullName,
-                Department = employee.Department,
+                Department = employee.Department?.Name,
                 TicketDate = request.TicketDate,
                 MealType = request.MealType,
                 Status = "Pending",

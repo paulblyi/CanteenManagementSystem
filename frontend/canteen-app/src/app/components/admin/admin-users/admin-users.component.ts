@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../../../services/auth.service";
+import { DepartmentService } from "../../../services/department.service";
 import { UserListDto, CreateUserRequest } from "../../../models/user.model";
+import { Department } from "../../../models/department.model";
 import {
   ROLES,
   ALL_ROLES,
@@ -17,6 +19,7 @@ export class AdminUsersComponent implements OnInit {
   // Data
   users: UserListDto[] = [];
   filteredUsers: UserListDto[] = [];
+  departments: Department[] = [];
   loading = false;
   searchTerm = "";
 
@@ -28,7 +31,7 @@ export class AdminUsersComponent implements OnInit {
     fullName: "",
     email: "",
     role: ROLES.EMPLOYEE,
-    department: "",
+    departmentId: undefined, // ✅ Use undefined instead of null
     employeeCode: "",
   };
 
@@ -43,13 +46,24 @@ export class AdminUsersComponent implements OnInit {
     return ROLE_PORTAL_MAP[role as Role] || role;
   }
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private departmentService: DepartmentService,
+  ) {}
 
   ngOnInit(): void {
+    this.loadDepartments();
     this.loadUsers();
   }
 
   // ---------- Data Loading ----------
+  loadDepartments(): void {
+    this.departmentService.getDepartments().subscribe({
+      next: (data: Department[]) => (this.departments = data),
+      error: (err) => console.error("Error loading departments:", err),
+    });
+  }
+
   loadUsers(): void {
     this.loading = true;
     this.authService.getUsers().subscribe({
@@ -77,7 +91,8 @@ export class AdminUsersComponent implements OnInit {
         user.username.toLowerCase().includes(term) ||
         user.fullName.toLowerCase().includes(term) ||
         (user.email && user.email.toLowerCase().includes(term)) ||
-        (user.department && user.department.toLowerCase().includes(term)),
+        (user.departmentName &&
+          user.departmentName.toLowerCase().includes(term)),
     );
   }
 
@@ -101,14 +116,14 @@ export class AdminUsersComponent implements OnInit {
 
   closeAddUserModal(): void {
     this.showAddUserModal = false;
-    // Reset the form
+    // Reset the form – use undefined for departmentId
     this.newUser = {
       username: "",
       password: "",
       fullName: "",
       email: "",
       role: ROLES.EMPLOYEE,
-      department: "",
+      departmentId: undefined,
       employeeCode: "",
     };
   }

@@ -1,42 +1,41 @@
 <div class="dashboard">
   <nav class="navbar">
     <div class="nav-brand">
-      <h2>🍽️ Canteen Management</h2>
+      <h2>🍽️ Masimba Canteen Management</h2>
     </div>
     <div class="nav-menu">
-      <!-- Role‑based portal links in the nav bar -->
-      <ng-container *ngIf="user">
-        <a
-          *ngIf="hasRole(ROLES.ADMIN)"
-          routerLink="/admin/users"
-          class="nav-link"
-          >⚙️ Admin</a
-        >
-        <a
-          *ngIf="hasRole(ROLES.HUMAN_CAPITAL)"
-          routerLink="/humancapital"
-          class="nav-link"
-          >👥 HC</a
-        >
-        <a
-          *ngIf="hasRole(ROLES.EMPLOYEE)"
-          routerLink="/employee"
-          class="nav-link"
-          >📝 Employee</a
-        >
-        <a *ngIf="hasRole(ROLES.CHEF)" routerLink="/chef" class="nav-link"
-          >🍽️ Chef</a
-        >
-        <a
-          *ngIf="hasRole(ROLES.FINANCE)"
-          routerLink="/reconciliation"
-          class="nav-link"
-          >📊 Finance</a
-        >
-        <a routerLink="/profile/change-password" class="nav-link"
-          >🔑 Change Password</a
-        >
-      </ng-container>
+      <!-- Admin Dropdown (visible only to Admins) -->
+      <div *ngIf="hasRole(ROLES.ADMIN)" class="dropdown">
+        <button class="dropbtn">⚙️ Admin</button>
+        <div class="dropdown-content">
+          <a routerLink="/admin/users">👤 User Management</a>
+          <a routerLink="/admin/departments">🏢 Departments</a>
+        </div>
+      </div>
+
+      <!-- Other portal links -->
+      <a
+        *ngIf="hasRole(ROLES.HUMAN_CAPITAL)"
+        routerLink="/humancapital"
+        class="nav-link"
+        >👥 HC</a
+      >
+      <a *ngIf="hasRole(ROLES.EMPLOYEE)" routerLink="/employee" class="nav-link"
+        >📝 Employee</a
+      >
+      <a *ngIf="hasRole(ROLES.CHEF)" routerLink="/chef" class="nav-link"
+        >🍽️ Chef</a
+      >
+      <a
+        *ngIf="hasRole(ROLES.FINANCE)"
+        routerLink="/reconciliation"
+        class="nav-link"
+        >📊 Finance</a
+      >
+      <a routerLink="/profile/change-password" class="nav-link"
+        >🔑 Change Password</a
+      >
+
       <span class="user-info">{{ user?.fullName }} ({{ user?.role }})</span>
       <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
     </div>

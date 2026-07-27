@@ -1,8 +1,13 @@
+/* =============================================
+   Dashboard – Main Layout
+   ============================================= */
+
 .dashboard {
   min-height: 100vh;
   background: #f5f6fa;
 }
 
+/* ---------- Navbar ---------- */
 .navbar {
   background: white;
   padding: 15px 30px;
@@ -24,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Keep everything in one line */
 }
 
 .nav-link {
@@ -34,7 +39,6 @@
   border-radius: 4px;
   transition: background 0.2s;
 }
-
 .nav-link:hover {
   background: #f0f0f0;
 }
@@ -42,8 +46,10 @@
 .user-info {
   color: #666;
   font-size: 14px;
+  margin-left: 10px;
 }
 
+/* ---------- Buttons ---------- */
 .btn {
   padding: 8px 16px;
   border: none;
@@ -52,27 +58,26 @@
   font-size: 14px;
   transition: all 0.3s;
 }
-
 .btn-danger {
   background: #dc3545;
   color: white;
 }
-
 .btn-danger:hover {
   background: #c82333;
 }
-
 .btn-sm {
   padding: 6px 12px;
   font-size: 12px;
 }
 
+/* ---------- Dashboard Content ---------- */
 .dashboard-content {
   padding: 20px 30px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
+/* ---------- Stats Cards ---------- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -90,7 +95,6 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s;
 }
-
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -99,18 +103,17 @@
 .stat-icon {
   font-size: 32px;
 }
-
 .stat-value {
   font-size: 24px;
   font-weight: bold;
   color: #333;
 }
-
 .stat-label {
   font-size: 13px;
   color: #888;
 }
 
+/* ---------- Quick Actions ---------- */
 .quick-actions {
   background: white;
   padding: 20px;
@@ -118,7 +121,6 @@
   margin-bottom: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
 .quick-actions h3 {
   margin-top: 0;
   margin-bottom: 15px;
@@ -141,13 +143,13 @@
   transition: all 0.3s;
   text-align: center;
 }
-
 .action-btn:hover {
   border-color: #667eea;
   background: #f8f9ff;
   transform: translateY(-2px);
 }
 
+/* ---------- Recent Activities ---------- */
 .recent-activities {
   background: white;
   padding: 20px;
@@ -155,7 +157,6 @@
   margin-bottom: 30px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
 .recent-activities h3 {
   margin-top: 0;
   margin-bottom: 15px;
@@ -166,7 +167,6 @@
   max-height: 300px;
   overflow-y: auto;
 }
-
 .activity-item {
   display: flex;
   align-items: flex-start;
@@ -174,25 +174,20 @@
   padding: 10px 0;
   border-bottom: 1px solid #f0f0f0;
 }
-
 .activity-item:last-child {
   border-bottom: none;
 }
-
 .activity-icon {
   font-size: 20px;
   min-width: 30px;
 }
-
 .activity-details {
   flex: 1;
 }
-
 .activity-description {
   color: #333;
   font-size: 14px;
 }
-
 .activity-meta {
   display: flex;
   gap: 15px;
@@ -200,20 +195,19 @@
   font-size: 12px;
   color: #999;
 }
-
 .no-activities {
   color: #999;
   text-align: center;
   padding: 20px;
 }
 
+/* ---------- Meal Type Stats ---------- */
 .meal-stats {
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
-
 .meal-stats h3 {
   margin-top: 0;
   margin-bottom: 15px;
@@ -225,7 +219,6 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
 }
-
 .meal-card {
   padding: 15px;
   border-radius: 8px;
@@ -233,15 +226,12 @@
   align-items: center;
   gap: 15px;
 }
-
 .meal-card.breakfast {
   background: #fff8e1;
 }
-
 .meal-card.lunch {
   background: #e3f2fd;
 }
-
 .meal-card.dinner {
   background: #f3e5f5;
 }
@@ -249,37 +239,89 @@
 .meal-icon {
   font-size: 28px;
 }
-
 .meal-name {
   font-weight: 500;
   color: #333;
 }
-
 .meal-count {
   font-size: 14px;
   color: #666;
 }
-
 .meal-revenue {
   font-weight: bold;
   color: #333;
 }
 
+/* ---------- Admin Dropdown (scoped under .dashboard) ---------- */
+.dashboard .dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dashboard .dropbtn {
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+.dashboard .dropbtn:hover {
+  background: #f0f0f0;
+}
+.dashboard .dropbtn::after {
+  content: " ▼";
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.dashboard .dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  z-index: 1000;
+  padding: 8px 0;
+  top: 100%;
+  left: 0;
+}
+.dashboard .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dashboard .dropdown-content a {
+  color: #333;
+  padding: 8px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.dashboard .dropdown-content a:hover {
+  background: #f5f5f5;
+}
+
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .dashboard-content {
     padding: 15px;
   }
-
   .navbar {
     padding: 12px 15px;
     flex-direction: column;
     gap: 10px;
   }
-
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .stats-grid {
     grid-template-columns: 1fr 1fr;
   }
-
   .action-grid {
     grid-template-columns: 1fr 1fr;
   }

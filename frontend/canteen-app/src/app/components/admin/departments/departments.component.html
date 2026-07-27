@@ -1,0 +1,197 @@
+<div class="admin-departments">
+  <!-- Header -->
+  <div class="page-header">
+    <h2>🏢 Department Management</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      + Add Department
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid" *ngIf="!loading">
+    <div class="stat-card">
+      <div class="stat-icon">🏢</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ departments.length }}</div>
+        <div class="stat-label">Total Departments</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getActiveCount() }}</div>
+        <div class="stat-label">Active Departments</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getTotalUsersCount() }}</div>
+        <div class="stat-label">Total Assigned Users</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getAverageUsersPerDept() }}</div>
+        <div class="stat-label">Avg Users / Department</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search / Filter Bar -->
+  <div class="filter-bar">
+    <input
+      type="text"
+      placeholder="🔍 Search departments..."
+      [(ngModel)]="searchTerm"
+      (input)="filterDepartments()"
+      class="search-input"
+    />
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="loading" class="loading">Loading...</div>
+  <div class="table-container" *ngIf="!loading">
+    <table class="dept-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Users</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dept of filteredDepartments">
+          <td>
+            <strong>{{ dept.name }}</strong>
+          </td>
+          <td>{{ dept.description || "—" }}</td>
+          <td>{{ dept.userCount || 0 }}</td>
+          <td>
+            <button
+              class="status-btn"
+              [class.active]="dept.isActive"
+              [class.inactive]="!dept.isActive"
+              (click)="toggleActive(dept)"
+            >
+              {{ dept.isActive ? "Active" : "Inactive" }}
+            </button>
+          </td>
+          <td>
+            <button
+              class="btn-action edit"
+              (click)="openEditModal(dept)"
+              title="Edit"
+            >
+              ✏️
+            </button>
+            <button
+              class="btn-action delete"
+              (click)="deleteDepartment(dept)"
+              title="Delete"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredDepartments.length === 0">
+          <td colspan="5" class="no-data">No departments found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Department Modal -->
+<div class="modal-overlay" *ngIf="showAddModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Department</h3>
+      <button class="close-btn" (click)="closeAddModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="createDepartment()">
+        <div class="form-group">
+          <label>Department Name</label>
+          <input
+            type="text"
+            [(ngModel)]="newDepartment.name"
+            name="deptName"
+            required
+            autofocus
+          />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="newDepartment.description"
+            name="deptDesc"
+            rows="2"
+            placeholder="Optional description"
+          ></textarea>
+        </div>
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAddModal()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div class="modal-overlay" *ngIf="showEditModal && currentDepartment">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Edit Department</h3>
+      <button class="close-btn" (click)="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="updateDepartment()">
+        <div class="form-group">
+          <label>Department Name</label>
+          <input
+            type="text"
+            [(ngModel)]="editDepartment.name"
+            name="editDeptName"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="editDepartment.description"
+            name="editDeptDesc"
+            rows="2"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="editDepartment.isActive" name="editDeptActive">
+            <option [value]="true">Active</option>
+            <option [value]="false">Inactive</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeEditModal()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -59,7 +59,7 @@
           >
             <option value="">-- Select Employee --</option>
             <option *ngFor="let emp of getMockEmployees()" [value]="emp.id">
-              {{ emp.fullName }} ({{ emp.department }})
+              {{ emp.fullName }} ({{ emp.departmentName }})
             </option>
           </select>
           <div class="selected-employees">

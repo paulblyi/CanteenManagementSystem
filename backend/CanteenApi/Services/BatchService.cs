@@ -30,7 +30,7 @@ namespace CanteenApi.Services
             {
                 BatchNumber = GenerateBatchNumber(),
                 CreatedBy = createdBy,
-                Department = request.Department ?? employees.FirstOrDefault()?.Department,
+                Department = request.Department ?? employees.FirstOrDefault()?.Department?.Name,
                 TicketDate = request.TicketDate,
                 MealType = request.MealType,
                 TotalTickets = employees.Count,
@@ -51,7 +51,7 @@ namespace CanteenApi.Services
                 };
 
                 var ticket = await _ticketService.RequestTicketAsync(employee.Id, ticketRequest);
-                
+
                 // Update ticket with batch info
                 var dbTicket = await _context.MealTickets.FindAsync(ticket.Id);
                 if (dbTicket != null)

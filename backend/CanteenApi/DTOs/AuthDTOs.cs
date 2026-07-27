@@ -36,7 +36,8 @@ namespace CanteenApi.DTOs
         [Required]
         public string Role { get; set; } = "Employee";
 
-        public string? Department { get; set; }
+        public int? DepartmentId { get; set; }
+
         public string? EmployeeCode { get; set; }
     }
 
@@ -47,7 +48,8 @@ namespace CanteenApi.DTOs
         public string FullName { get; set; } = string.Empty;
         public string? Email { get; set; }
         public string Role { get; set; } = string.Empty;
-        public string? Department { get; set; }
+        public int? DepartmentId { get; set; }           // foreign key
+        public string? DepartmentName { get; set; }      // display name
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
     }
@@ -56,14 +58,21 @@ namespace CanteenApi.DTOs
     {
         [Required]
         public string Username { get; set; } = string.Empty;
+
         [Required]
         public string Password { get; set; } = string.Empty;
+
         [Required]
         public string FullName { get; set; } = string.Empty;
+
         public string? Email { get; set; }
+
         [Required]
         public string Role { get; set; } = "Employee";
-        public string? Department { get; set; }
+
+        // Use DepartmentId instead of Department name
+        public int? DepartmentId { get; set; }
+
         public string? EmployeeCode { get; set; }
     }
 
@@ -83,8 +92,8 @@ namespace CanteenApi.DTOs
     {
         [Required]
         public string CurrentPassword { get; set; } = string.Empty;
+
         [Required]
         public string NewPassword { get; set; } = string.Empty;
     }
-
 }

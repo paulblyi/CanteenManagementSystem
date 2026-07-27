@@ -17,7 +17,7 @@ namespace CanteenApi.Data
         public DbSet<Reconciliation> Reconciliations { get; set; }
         public DbSet<DailySummary> DailySummaries { get; set; }
         public DbSet<BillingRecord> BillingRecords { get; set; }
-
+        public DbSet<Department> Departments { get; set; } // New DbSet for Departments
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -53,6 +53,20 @@ namespace CanteenApi.Data
                 .HasIndex(b => b.BatchNumber)
                 .IsUnique();
 
+            modelBuilder.Entity<Department>()
+                .HasMany(d => d.Users)
+                .WithOne(u => u.Department)
+                .HasForeignKey(u => u.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull); // If department deleted, set null
+
+            modelBuilder.Entity<Department>().HasData(
+                new Department { Id = 1, Name = "IT", Description = "Information Technology", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Department { Id = 2, Name = "HC", Description = "Human Capital", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Department { Id = 3, Name = "Finance", Description = "Finance Department", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Department { Id = 4, Name = "Operations", Description = "Operations & Logistics", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Department { Id = 5, Name = "Marketing", Description = "Marketing & Sales", IsActive = true, CreatedAt = DateTime.UtcNow }
+            );
+
             // Seed default admin user (password: Admin@123)
             var adminUser = new User
             {
@@ -62,13 +76,14 @@ namespace CanteenApi.Data
                 FullName = "System Administrator",
                 Email = "admin@masimba.co.zw",
                 Role = "Admin",
-                Department = "IT",
+                DepartmentId = 1, // Assuming the IT department has an ID of 1
                 EmployeeCode = "ADMIN001",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
             modelBuilder.Entity<User>().HasData(adminUser);
+
         }
     }
 }

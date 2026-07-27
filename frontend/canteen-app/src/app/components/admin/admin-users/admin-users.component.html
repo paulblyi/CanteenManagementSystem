@@ -76,7 +76,7 @@
             <!-- Display the portal name in the table -->
             {{ getPortalForRole(user.role) }}
           </td>
-          <td>{{ user.department || "—" }}</td>
+          <td>{{ user.departmentName || "—" }}</td>
           <td>
             <button
               class="status-btn"
@@ -161,11 +161,13 @@
           </div>
           <div class="form-group">
             <label>Department</label>
-            <input
-              type="text"
-              [(ngModel)]="newUser.department"
-              name="department"
-            />
+            <!-- Department dropdown -->
+            <select [(ngModel)]="newUser.departmentId" name="departmentId">
+              <option [ngValue]="null">-- None --</option>
+              <option *ngFor="let dept of departments" [ngValue]="dept.id">
+                {{ dept.name }}
+              </option>
+            </select>
           </div>
         </div>
         <div class="form-group">

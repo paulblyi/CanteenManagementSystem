@@ -12,6 +12,7 @@ import { ReportsComponent } from "./components/reports/reports.component";
 import { AdminUsersComponent } from "./components/admin/admin-users/admin-users.component";
 import { ChangePasswordComponent } from "./components/profile/change-password.component";
 import { ROLES } from "./models/role.model";
+import { DepartmentsComponent } from "./components/admin/departments/departments.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
@@ -59,6 +60,12 @@ const routes: Routes = [
   {
     path: "admin/users",
     component: AdminUsersComponent,
+    canActivate: [AuthGuard],
+    data: { roles: [ROLES.ADMIN] },
+  },
+  {
+    path: "admin/departments",
+    component: DepartmentsComponent,
     canActivate: [AuthGuard],
     data: { roles: [ROLES.ADMIN] },
   },

@@ -5,7 +5,8 @@ export interface User {
   fullName: string;
   email?: string;
   role: "Employee" | "HumanCapital" | "Chef" | "Admin" | "Finance";
-  department?: string;
+  departmentId?: number;
+  departmentName?: string;
   employeeCode?: string;
   isActive: boolean;
   createdAt: Date;
@@ -30,7 +31,7 @@ export interface RegisterRequest {
   fullName: string;
   email?: string;
   role: string;
-  department?: string;
+  department?: string; // Still string for registration (if needed)
   employeeCode?: string;
 }
 
@@ -46,7 +47,8 @@ export interface UserListDto {
   fullName: string;
   email?: string;
   role: string;
-  department?: string;
+  departmentId?: number; // ← added
+  departmentName?: string; // ← added (instead of department string)
   isActive: boolean;
   createdAt: Date;
 }
@@ -57,7 +59,7 @@ export interface CreateUserRequest {
   fullName: string;
   email?: string;
   role: string;
-  department?: string;
+  departmentId?: number; // ← use departmentId (not department)
   employeeCode?: string;
 }
 

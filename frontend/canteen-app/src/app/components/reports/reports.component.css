@@ -16,7 +16,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  align-items: end;
+  align-items: flex-end;
 }
 .filter-group {
   display: flex;

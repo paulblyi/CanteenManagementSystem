@@ -51,7 +51,7 @@ namespace CanteenApi.Services
                 FullName = request.FullName,
                 Email = request.Email,
                 Role = request.Role,
-                Department = request.Department,
+                DepartmentId = request.DepartmentId,
                 EmployeeCode = request.EmployeeCode,
                 CreatedAt = DateTime.UtcNow
             };
@@ -114,7 +114,7 @@ namespace CanteenApi.Services
                 FullName = u.FullName,
                 Email = u.Email,
                 Role = u.Role,
-                Department = u.Department,
+                DepartmentId = u.Department?.Id,
                 IsActive = u.IsActive,
                 CreatedAt = u.CreatedAt
             }).ToList();
@@ -132,7 +132,7 @@ namespace CanteenApi.Services
                 FullName = request.FullName,
                 Email = request.Email,
                 Role = request.Role,
-                Department = request.Department,
+                DepartmentId = request.DepartmentId,
                 EmployeeCode = request.EmployeeCode,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
@@ -188,7 +188,7 @@ namespace CanteenApi.Services
                 FullName = user.FullName,
                 Email = user.Email,
                 Role = user.Role,
-                Department = user.Department,
+                DepartmentId = user.Department?.Id,
                 IsActive = user.IsActive,
                 CreatedAt = user.CreatedAt
             };

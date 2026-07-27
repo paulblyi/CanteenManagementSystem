@@ -48,6 +48,7 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IBatchService, BatchService>();
 builder.Services.AddScoped<IReconciliationService, ReconciliationService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>

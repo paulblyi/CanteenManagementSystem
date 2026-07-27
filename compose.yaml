@@ -35,7 +35,7 @@ services:
     networks:
       - canteen-network
 
-  frontend: # ← NEW
+  frontend:
     build:
       context: ./frontend/canteen-app
       dockerfile: Dockerfile
