@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { TicketService } from "../../services/ticket.service";
-import { RedemptionLog } from "../../models/redemption.model";
+
 @Component({
   selector: "app-chef",
   templateUrl: "./chef.component.html",
@@ -9,7 +9,7 @@ import { RedemptionLog } from "../../models/redemption.model";
 export class ChefComponent {
   ticketNumber = "";
   validationResult: any = null;
-  recentRedemptions: RedemptionLog[] = [];
+  recentRedemptions: any[] = [];
 
   constructor(private ticketService: TicketService) {
     this.loadRecentRedemptions();
@@ -56,13 +56,8 @@ export class ChefComponent {
   }
 
   loadRecentRedemptions(): void {
-    this.ticketService.getRecentRedemptions().subscribe({
-      next: (data) => {
-        this.recentRedemptions = data;
-      },
-      error: (err) => {
-        console.error("Error loading recent redemptions:", err);
-      },
-    });
+    // You can implement an API call to fetch recent redemptions
+    // For now, it's empty.
+    this.recentRedemptions = [];
   }
 }

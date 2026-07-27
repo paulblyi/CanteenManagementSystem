@@ -29,11 +29,11 @@ export class ReportsComponent implements OnInit {
 
     if (this.reportType === "daily") {
       this.reportService.getDailyReport(this.selectedDate).subscribe({
-        next: (data) => {
+        next: (data: DailyReport) => {
           this.dailyReport = data;
           this.loading = false;
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error("Error loading daily report:", err);
           this.loading = false;
         },
@@ -41,11 +41,11 @@ export class ReportsComponent implements OnInit {
     } else if (this.reportType === "monthly") {
       const [year, month] = this.selectedMonth.split("-").map(Number);
       this.reportService.getMonthlyReport(year, month).subscribe({
-        next: (data) => {
-          this.dailyReport = data;
+        next: (data: any) => {
+          this.dailyReport = data; // monthly report structure matches DailyReport?
           this.loading = false;
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error("Error loading monthly report:", err);
           this.loading = false;
         },
@@ -54,11 +54,11 @@ export class ReportsComponent implements OnInit {
       this.reportService
         .getDepartmentReport(this.startDate, this.endDate)
         .subscribe({
-          next: (data) => {
+          next: (data: DepartmentReport[]) => {
             this.departmentReport = data;
             this.loading = false;
           },
-          error: (err) => {
+          error: (err: any) => {
             console.error("Error loading department report:", err);
             this.loading = false;
           },
@@ -68,7 +68,7 @@ export class ReportsComponent implements OnInit {
 
   exportReport(): void {
     this.reportService.exportReport(this.startDate, this.endDate).subscribe({
-      next: (blob) => {
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -76,7 +76,7 @@ export class ReportsComponent implements OnInit {
         a.click();
         window.URL.revokeObjectURL(url);
       },
-      error: (err) => {
+      error: (err: any) => {
         alert("Error exporting report");
       },
     });

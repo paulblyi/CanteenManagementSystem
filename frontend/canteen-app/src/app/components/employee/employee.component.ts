@@ -13,14 +13,14 @@ export class EmployeeComponent implements OnInit {
   showRequestForm = false;
   showTicketDetail = false;
   loading = false;
-  today = new Date().toISOString().split("T")[0]; // ← ADD THIS
 
-  // Request form
   request: TicketRequest = {
     ticketDate: new Date(),
     mealType: "Lunch",
     notes: "",
   };
+
+  today = new Date().toISOString().split("T")[0];
 
   constructor(private ticketService: TicketService) {}
 
@@ -31,11 +31,11 @@ export class EmployeeComponent implements OnInit {
   loadMyTickets(): void {
     this.loading = true;
     this.ticketService.getMyTickets().subscribe({
-      next: (data) => {
+      next: (data: MealTicket[]) => {
         this.tickets = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error("Error loading tickets:", err);
         this.loading = false;
       },
@@ -50,7 +50,7 @@ export class EmployeeComponent implements OnInit {
         this.loadMyTickets();
         alert("Ticket requested successfully!");
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert(err.error?.message || "Error requesting ticket");
       },
@@ -63,7 +63,7 @@ export class EmployeeComponent implements OnInit {
         next: () => {
           this.loadMyTickets();
         },
-        error: (err) => {
+        error: (err: any) => {
           alert("Error cancelling ticket");
         },
       });

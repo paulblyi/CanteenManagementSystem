@@ -4,6 +4,7 @@ import { BatchService } from "../../services/batch.service";
 import { MealTicket, TicketApproval } from "../../models/ticket.model";
 import { Batch, BatchCreate } from "../../models/batch.model";
 import { User } from "../../models/user.model";
+import { ROLES } from "../../models/role.model";
 
 @Component({
   selector: "app-humancapital",
@@ -19,7 +20,6 @@ export class HumanCapitalComponent implements OnInit {
   selectedTicket: MealTicket | null = null;
   loading = false;
 
-  // Batch form
   batchRequest: BatchCreate = {
     ticketDate: new Date(),
     mealType: "Lunch",
@@ -27,9 +27,10 @@ export class HumanCapitalComponent implements OnInit {
     department: "",
   };
 
-  // Employee selection
   availableEmployees: User[] = [];
   selectedEmployees: User[] = [];
+
+  today = new Date().toISOString().split("T")[0];
 
   constructor(
     private ticketService: TicketService,
@@ -44,11 +45,11 @@ export class HumanCapitalComponent implements OnInit {
   loadPendingTickets(): void {
     this.loading = true;
     this.ticketService.getPendingTickets().subscribe({
-      next: (data) => {
+      next: (data: MealTicket[]) => {
         this.pendingTickets = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error("Error loading pending tickets:", err);
         this.loading = false;
       },
@@ -57,10 +58,10 @@ export class HumanCapitalComponent implements OnInit {
 
   loadBatches(): void {
     this.batchService.getBatches().subscribe({
-      next: (data) => {
+      next: (data: Batch[]) => {
         this.batches = data;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error("Error loading batches:", err);
       },
     });
@@ -78,7 +79,7 @@ export class HumanCapitalComponent implements OnInit {
         this.loadPendingTickets();
         alert(`Ticket ${status.toLowerCase()} successfully!`);
       },
-      error: (err) => {
+      error: (err: any) => {
         alert("Error processing ticket");
       },
     });
@@ -94,7 +95,7 @@ export class HumanCapitalComponent implements OnInit {
 
     this.loading = true;
     this.batchService.createBatch(this.batchRequest).subscribe({
-      next: (data) => {
+      next: (data: Batch) => {
         this.loading = false;
         this.showBatchForm = false;
         this.selectedEmployees = [];
@@ -103,7 +104,7 @@ export class HumanCapitalComponent implements OnInit {
           `Batch created successfully! ${data.totalTickets} tickets generated.`,
         );
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert(err.error?.message || "Error creating batch");
       },
@@ -117,7 +118,7 @@ export class HumanCapitalComponent implements OnInit {
           this.loadBatches();
           alert("Batch cancelled successfully!");
         },
-        error: (err) => {
+        error: (err: any) => {
           alert("Error cancelling batch");
         },
       });
@@ -126,7 +127,6 @@ export class HumanCapitalComponent implements OnInit {
 
   viewBatch(batch: Batch): void {
     this.selectedBatch = batch;
-    // In real implementation, load full batch details
   }
 
   getStatusColor(status: string): string {
@@ -173,14 +173,21 @@ export class HumanCapitalComponent implements OnInit {
     );
   }
 
-  // Mock employee data - in real implementation, fetch from API
+  addEmployeeById(id: string): void {
+    const employee = this.getMockEmployees().find((e) => e.id === +id);
+    if (employee && !this.selectedEmployees.find((e) => e.id === employee.id)) {
+      this.selectedEmployees.push(employee);
+    }
+  }
+
+  // Mock employees – replace with real API call
   getMockEmployees(): User[] {
     return [
       {
         id: 1,
         username: "john.doe",
         fullName: "John Doe",
-        role: "Employee",
+        role: ROLES.EMPLOYEE,
         department: "IT",
         isActive: true,
         createdAt: new Date(),
@@ -189,7 +196,7 @@ export class HumanCapitalComponent implements OnInit {
         id: 2,
         username: "jane.smith",
         fullName: "Jane Smith",
-        role: "Employee",
+        role: ROLES.EMPLOYEE,
         department: "HR",
         isActive: true,
         createdAt: new Date(),
@@ -198,7 +205,7 @@ export class HumanCapitalComponent implements OnInit {
         id: 3,
         username: "bob.johnson",
         fullName: "Bob Johnson",
-        role: "Employee",
+        role: ROLES.EMPLOYEE,
         department: "Finance",
         isActive: true,
         createdAt: new Date(),
@@ -207,7 +214,7 @@ export class HumanCapitalComponent implements OnInit {
         id: 4,
         username: "alice.williams",
         fullName: "Alice Williams",
-        role: "Employee",
+        role: ROLES.EMPLOYEE,
         department: "IT",
         isActive: true,
         createdAt: new Date(),
@@ -216,22 +223,11 @@ export class HumanCapitalComponent implements OnInit {
         id: 5,
         username: "charlie.brown",
         fullName: "Charlie Brown",
-        role: "Employee",
+        role: ROLES.EMPLOYEE,
         department: "Operations",
         isActive: true,
         createdAt: new Date(),
       },
     ];
-  }
-
-  addEmployeeById(id: string): void {
-    const employee = this.getMockEmployees().find((e) => e.id === +id);
-    if (employee && !this.selectedEmployees.find((e) => e.id === employee.id)) {
-      this.selectedEmployees.push(employee);
-    }
-  }
-
-  get today(): string {
-    return new Date().toISOString().split("T")[0];
   }
 }

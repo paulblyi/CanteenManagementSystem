@@ -4,6 +4,39 @@
       <h2>🍽️ Canteen Management</h2>
     </div>
     <div class="nav-menu">
+      <!-- Role‑based portal links in the nav bar -->
+      <ng-container *ngIf="user">
+        <a
+          *ngIf="hasRole(ROLES.ADMIN)"
+          routerLink="/admin/users"
+          class="nav-link"
+          >⚙️ Admin</a
+        >
+        <a
+          *ngIf="hasRole(ROLES.HUMAN_CAPITAL)"
+          routerLink="/humancapital"
+          class="nav-link"
+          >👥 HC</a
+        >
+        <a
+          *ngIf="hasRole(ROLES.EMPLOYEE)"
+          routerLink="/employee"
+          class="nav-link"
+          >📝 Employee</a
+        >
+        <a *ngIf="hasRole(ROLES.CHEF)" routerLink="/chef" class="nav-link"
+          >🍽️ Chef</a
+        >
+        <a
+          *ngIf="hasRole(ROLES.FINANCE)"
+          routerLink="/reconciliation"
+          class="nav-link"
+          >📊 Finance</a
+        >
+        <a routerLink="/profile/change-password" class="nav-link"
+          >🔑 Change Password</a
+        >
+      </ng-container>
       <span class="user-info">{{ user?.fullName }} ({{ user?.role }})</span>
       <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
     </div>
@@ -49,6 +82,7 @@
     <div class="quick-actions">
       <h3>Quick Actions</h3>
       <div class="action-grid">
+        <!-- Employee actions -->
         <button
           *ngIf="hasAnyRole(['Employee', 'Admin'])"
           class="action-btn"
@@ -57,6 +91,7 @@
           📝 Request Meal
         </button>
 
+        <!-- Human Capital actions -->
         <button
           *ngIf="hasAnyRole(['HumanCapital', 'Admin'])"
           class="action-btn"
@@ -73,6 +108,7 @@
           📦 Create Batch
         </button>
 
+        <!-- Chef actions -->
         <button
           *ngIf="hasAnyRole(['Chef', 'Admin'])"
           class="action-btn"
@@ -81,6 +117,7 @@
           🔍 Validate Ticket
         </button>
 
+        <!-- Finance actions -->
         <button
           *ngIf="hasAnyRole(['Finance', 'Admin'])"
           class="action-btn"
@@ -95,6 +132,15 @@
           [routerLink]="['/reports']"
         >
           📊 Reports
+        </button>
+
+        <!-- ★ ADMIN-ONLY: Manage Users ★ -->
+        <button
+          *ngIf="hasRole(ROLES.ADMIN)"
+          class="action-btn admin-btn"
+          [routerLink]="['/admin/users']"
+        >
+          👤 Manage Users
         </button>
       </div>
     </div>
@@ -167,12 +213,6 @@
               ${{ stats.mealTypeStats.dinnerRevenue.toFixed(2) }}
             </div>
           </div>
-        </div>
-        <div *ngIf="hasRole('Admin')" class="nav-item">
-          <a routerLink="/admin/users">Manage Users</a>
-        </div>
-        <div class="nav-item">
-          <a routerLink="/profile/change-password">Change Password</a>
         </div>
       </div>
     </div>

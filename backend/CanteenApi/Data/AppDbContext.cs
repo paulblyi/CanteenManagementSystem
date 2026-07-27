@@ -60,7 +60,7 @@ namespace CanteenApi.Data
                 Username = "admin",
                 PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("Admin@123")),
                 FullName = "System Administrator",
-                Email = "admin@canteen.com",
+                Email = "admin@masimba.co.zw",
                 Role = "Admin",
                 Department = "IT",
                 EmployeeCode = "ADMIN001",

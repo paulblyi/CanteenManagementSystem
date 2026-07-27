@@ -30,12 +30,12 @@ export class ReconciliationComponent implements OnInit {
   reconcileDate(): void {
     this.loading = true;
     this.reconciliationService.reconcileDate(this.selectedDate).subscribe({
-      next: (data) => {
+      next: (data: Reconciliation) => {
         this.currentReconciliation = data;
         this.loading = false;
         this.loadReconciliations();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert(err.error?.message || "Error running reconciliation");
       },
@@ -52,13 +52,13 @@ export class ReconciliationComponent implements OnInit {
         "Completed by user",
       )
       .subscribe({
-        next: (data) => {
+        next: (data: Reconciliation) => {
           this.currentReconciliation = data;
           this.loading = false;
           this.loadReconciliations();
           alert("Reconciliation completed successfully!");
         },
-        error: (err) => {
+        error: (err: any) => {
           this.loading = false;
           alert(err.error?.message || "Error completing reconciliation");
         },
@@ -72,13 +72,13 @@ export class ReconciliationComponent implements OnInit {
     this.reconciliationService
       .autoReconcile(this.currentReconciliation.id)
       .subscribe({
-        next: (data) => {
+        next: (data: Reconciliation) => {
           this.currentReconciliation = data;
           this.loading = false;
           this.loadReconciliations();
           alert("Auto-reconciliation completed!");
         },
-        error: (err) => {
+        error: (err: any) => {
           this.loading = false;
           alert(err.error?.message || "Error auto-reconciling");
         },
@@ -87,10 +87,10 @@ export class ReconciliationComponent implements OnInit {
 
   loadReconciliations(): void {
     this.reconciliationService.getReconciliations().subscribe({
-      next: (data) => {
+      next: (data: Reconciliation[]) => {
         this.reconciliations = data;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error("Error loading reconciliations:", err);
       },
     });
@@ -98,11 +98,11 @@ export class ReconciliationComponent implements OnInit {
 
   viewReconciliation(id: number): void {
     this.reconciliationService.getReconciliation(id).subscribe({
-      next: (data) => {
+      next: (data: Reconciliation) => {
         this.currentReconciliation = data;
         this.varianceDetails = [];
       },
-      error: (err) => {
+      error: (err: any) => {
         alert("Error loading reconciliation details");
       },
     });
@@ -114,10 +114,10 @@ export class ReconciliationComponent implements OnInit {
     this.reconciliationService
       .getVarianceDetails(this.currentReconciliation.id)
       .subscribe({
-        next: (data) => {
+        next: (data: VarianceDetail[]) => {
           this.varianceDetails = data;
         },
-        error: (err) => {
+        error: (err: any) => {
           alert("Error loading variance details");
         },
       });

@@ -15,6 +15,7 @@ import { HumanCapitalComponent } from "./components/humancapital/humancapital.co
 import { ChefComponent } from "./components/chef/chef.component";
 import { ReconciliationComponent } from "./components/reconciliation/reconciliation.component";
 import { ReportsComponent } from "./components/reports/reports.component";
+import { AdminUsersComponent } from "./components/admin/admin-users/admin-users.component";
 
 // Interceptors
 import { AuthInterceptor } from "./interceptors/auth.interceptor";
@@ -38,6 +39,7 @@ import { ChangePasswordComponent } from "./components/profile/change-password.co
     ReconciliationComponent,
     ReportsComponent,
     ChangePasswordComponent,
+    AdminUsersComponent,
   ],
 
   imports: [

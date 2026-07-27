@@ -37,7 +37,11 @@
         {{ error }}
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="loading"
+      >
         <span *ngIf="loading">Loading...</span>
         <span *ngIf="!loading">Sign In</span>
       </button>
@@ -45,9 +49,9 @@
 
     <div class="login-footer">
       <p>Demo Credentials:</p>
-      <small>Admin: admin / Admin@123</small><br>
-      <small>Employee: employee / Employee@123</small><br>
-      <small>HC: hc / HC@123</small><br>
+      <small>Admin: admin / Admin@123</small><br />
+      <small>Employee: employee / Employee@123</small><br />
+      <small>HC: hc / HC@123</small><br />
       <small>Chef: chef / Chef@123</small>
     </div>
   </div>

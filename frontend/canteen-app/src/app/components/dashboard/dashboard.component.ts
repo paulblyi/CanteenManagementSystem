@@ -1,28 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { ReportService } from '../../services/report.service';
-import { DashboardStats } from '../../models/report.model';
-import { User } from '../../models/user.model';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
+import { ReportService } from "../../services/report.service";
+import { DashboardStats } from "../../models/report.model";
+import { User } from "../../models/user.model";
+import { ROLES } from "../../models/role.model";
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
   user: User | null = null;
   stats: DashboardStats | null = null;
   loading = true;
 
+  // Expose ROLES to the template
+  public ROLES = ROLES;
+
   constructor(
     private authService: AuthService,
     private reportService: ReportService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
+    console.log("User role:", this.user?.role); // should be 'Admin'
     this.loadDashboardStats();
   }
 
@@ -34,9 +39,9 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error loading dashboard stats:', err);
+        console.error("Error loading dashboard stats:", err);
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -50,25 +55,34 @@ export class DashboardComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(["/login"]);
   }
 
   getActivityIcon(type: string): string {
     switch (type) {
-      case 'Request': return '📝';
-      case 'Approval': return '✅';
-      case 'Redemption': return '🍽️';
-      default: return '📌';
+      case "Request":
+        return "📝";
+      case "Approval":
+        return "✅";
+      case "Redemption":
+        return "🍽️";
+      default:
+        return "📌";
     }
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'Pending': return '#ffc107';
-      case 'Approved': return '#28a745';
-      case 'Redeemed': return '#007bff';
-      case 'Cancelled': return '#dc3545';
-      default: return '#6c757d';
+      case "Pending":
+        return "#ffc107";
+      case "Approved":
+        return "#28a745";
+      case "Redeemed":
+        return "#007bff";
+      case "Cancelled":
+        return "#dc3545";
+      default:
+        return "#6c757d";
     }
   }
 }

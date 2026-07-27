@@ -1,6 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "../../../services/auth.service";
 import { UserListDto, CreateUserRequest } from "../../../models/user.model";
+import {
+  ROLES,
+  ALL_ROLES,
+  ROLE_PORTAL_MAP,
+  Role,
+} from "../../../models/role.model";
 
 @Component({
   selector: "app-admin-users",
@@ -8,21 +14,34 @@ import { UserListDto, CreateUserRequest } from "../../../models/user.model";
   styleUrls: ["./admin-users.component.css"],
 })
 export class AdminUsersComponent implements OnInit {
+  // Data
   users: UserListDto[] = [];
+  filteredUsers: UserListDto[] = [];
   loading = false;
-  showAddForm = false;
+  searchTerm = "";
 
+  // Add user modal
+  showAddUserModal = false;
   newUser: CreateUserRequest = {
     username: "",
     password: "",
     fullName: "",
     email: "",
-    role: "Employee",
+    role: ROLES.EMPLOYEE,
     department: "",
     employeeCode: "",
   };
 
-  roles = ["Employee", "HumanCapital", "Chef", "Admin", "Finance"];
+  // For dropdown display: map each role to its friendly portal name
+  roleOptions = ALL_ROLES.map((role) => ({
+    value: role,
+    label: ROLE_PORTAL_MAP[role as Role] || role,
+  }));
+
+  // For table display
+  getPortalForRole(role: string): string {
+    return ROLE_PORTAL_MAP[role as Role] || role;
+  }
 
   constructor(private authService: AuthService) {}
 
@@ -30,28 +49,88 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  // ---------- Data Loading ----------
   loadUsers(): void {
     this.loading = true;
     this.authService.getUsers().subscribe({
-      next: (data) => {
+      next: (data: UserListDto[]) => {
         this.users = data;
+        this.filteredUsers = data;
         this.loading = false;
       },
-      error: (err) => {
-        console.error(err);
+      error: (err: any) => {
+        console.error("Error loading users:", err);
         this.loading = false;
       },
     });
   }
 
+  // ---------- Filtering ----------
+  filterUsers(): void {
+    const term = this.searchTerm.toLowerCase().trim();
+    if (!term) {
+      this.filteredUsers = this.users;
+      return;
+    }
+    this.filteredUsers = this.users.filter(
+      (user) =>
+        user.username.toLowerCase().includes(term) ||
+        user.fullName.toLowerCase().includes(term) ||
+        (user.email && user.email.toLowerCase().includes(term)) ||
+        (user.department && user.department.toLowerCase().includes(term)),
+    );
+  }
+
+  // ---------- Stats ----------
+  getActiveUsersCount(): number {
+    return this.users.filter((u) => u.isActive).length;
+  }
+
+  getAdminCount(): number {
+    return this.users.filter((u) => u.role === ROLES.ADMIN).length;
+  }
+
+  getHCEmployeesCount(): number {
+    return this.users.filter((u) => u.role === ROLES.HUMAN_CAPITAL).length;
+  }
+
+  // ---------- Modal Control ----------
+  openAddUserModal(): void {
+    this.showAddUserModal = true;
+  }
+
+  closeAddUserModal(): void {
+    this.showAddUserModal = false;
+    // Reset the form
+    this.newUser = {
+      username: "",
+      password: "",
+      fullName: "",
+      email: "",
+      role: ROLES.EMPLOYEE,
+      department: "",
+      employeeCode: "",
+    };
+  }
+
+  // ---------- CRUD Operations ----------
   createUser(): void {
+    if (
+      !this.newUser.username ||
+      !this.newUser.password ||
+      !this.newUser.fullName
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
     this.authService.createUser(this.newUser).subscribe({
       next: () => {
-        this.showAddForm = false;
+        this.closeAddUserModal();
         this.loadUsers();
         alert("User created successfully.");
       },
-      error: (err) => {
+      error: (err: any) => {
         alert(err.error?.message || "Error creating user.");
       },
     });
@@ -60,15 +139,19 @@ export class AdminUsersComponent implements OnInit {
   toggleActive(user: UserListDto): void {
     this.authService.toggleUserActive(user.id).subscribe({
       next: () => this.loadUsers(),
-      error: (err) => alert("Error toggling user status."),
+      error: (err: any) => alert("Error toggling user status."),
     });
   }
 
   changeRole(user: UserListDto, newRole: string): void {
-    if (confirm(`Change role of ${user.fullName} to ${newRole}?`)) {
+    if (
+      confirm(
+        `Change role of ${user.fullName} to ${this.getPortalForRole(newRole)}?`,
+      )
+    ) {
       this.authService.updateUserRole(user.id, newRole).subscribe({
         next: () => this.loadUsers(),
-        error: (err) => alert("Error updating role."),
+        error: (err: any) => alert("Error updating role."),
       });
     }
   }
@@ -78,7 +161,7 @@ export class AdminUsersComponent implements OnInit {
     if (newPassword && newPassword.length >= 6) {
       this.authService.resetUserPassword(user.id, newPassword).subscribe({
         next: () => alert("Password reset successfully."),
-        error: (err) => alert("Error resetting password."),
+        error: (err: any) => alert("Error resetting password."),
       });
     } else if (newPassword !== null) {
       alert("Password must be at least 6 characters.");

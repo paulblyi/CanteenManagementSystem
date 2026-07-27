@@ -1,112 +1,192 @@
 <div class="admin-users">
-  <h2>User Management</h2>
-  <button class="btn btn-primary" (click)="showAddForm = !showAddForm">
-    {{ showAddForm ? "Cancel" : "+ Add User" }}
-  </button>
+  <!-- Header -->
+  <div class="page-header">
+    <h2>👤 User Management</h2>
+    <button class="btn btn-primary" (click)="openAddUserModal()">
+      + Add User
+    </button>
+  </div>
 
-  <!-- Add User Form -->
-  <div *ngIf="showAddForm" class="add-form">
-    <h3>Create New User</h3>
-    <form (ngSubmit)="createUser()">
-      <div class="form-group">
-        <label>Username</label>
-        <input
-          type="text"
-          [(ngModel)]="newUser.username"
-          name="username"
-          required
-        />
+  <!-- Stats Cards -->
+  <div class="stats-grid" *ngIf="!loading">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ users.length }}</div>
+        <div class="stat-label">Total Users</div>
       </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input
-          type="password"
-          [(ngModel)]="newUser.password"
-          name="password"
-          required
-        />
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getActiveUsersCount() }}</div>
+        <div class="stat-label">Active Users</div>
       </div>
-      <div class="form-group">
-        <label>Full Name</label>
-        <input
-          type="text"
-          [(ngModel)]="newUser.fullName"
-          name="fullName"
-          required
-        />
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🛡️</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getAdminCount() }}</div>
+        <div class="stat-label">Admins</div>
       </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" [(ngModel)]="newUser.email" name="email" />
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">👔</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ getHCEmployeesCount() }}</div>
+        <div class="stat-label">Human Capital</div>
       </div>
-      <div class="form-group">
-        <label>Role</label>
-        <select [(ngModel)]="newUser.role" name="role">
-          <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Department</label>
-        <input type="text" [(ngModel)]="newUser.department" name="department" />
-      </div>
-      <div class="form-group">
-        <label>Employee Code</label>
-        <input
-          type="text"
-          [(ngModel)]="newUser.employeeCode"
-          name="employeeCode"
-        />
-      </div>
-      <button type="submit" class="btn btn-success">Create</button>
-    </form>
+    </div>
+  </div>
+
+  <!-- Search / Filter Bar -->
+  <div class="filter-bar">
+    <input
+      type="text"
+      placeholder="🔍 Search users..."
+      [(ngModel)]="searchTerm"
+      (input)="filterUsers()"
+      class="search-input"
+    />
   </div>
 
   <!-- User Table -->
   <div *ngIf="loading" class="loading">Loading...</div>
-  <table *ngIf="!loading" class="user-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Department</th>
-        <th>Active</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.fullName }}</td>
-        <td>{{ user.email }}</td>
-        <td>
-          <select
-            (change)="changeRole(user, $event.target.value)"
-            [value]="user.role"
-          >
-            <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-          </select>
-        </td>
-        <td>{{ user.department }}</td>
-        <td>
+  <div class="table-container" *ngIf="!loading">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Department</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>
+            <strong>{{ user.username }}</strong>
+          </td>
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.email || "—" }}</td>
+          <td>
+            <!-- Display the portal name in the table -->
+            {{ getPortalForRole(user.role) }}
+          </td>
+          <td>{{ user.department || "—" }}</td>
+          <td>
+            <button
+              class="status-btn"
+              [class.active]="user.isActive"
+              [class.inactive]="!user.isActive"
+              (click)="toggleActive(user)"
+            >
+              {{ user.isActive ? "Active" : "Inactive" }}
+            </button>
+          </td>
+          <td>
+            <button
+              class="btn-action reset-pwd"
+              (click)="resetPassword(user)"
+              title="Reset Password"
+            >
+              🔑
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredUsers.length === 0">
+          <td colspan="7" class="no-data">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" *ngIf="showAddUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add New User</h3>
+      <button class="close-btn" (click)="closeAddUserModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="createUser()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.username"
+              name="username"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              [(ngModel)]="newUser.password"
+              name="password"
+              required
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.fullName"
+              name="fullName"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="newUser.email" name="email" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Role</label>
+            <select [(ngModel)]="newUser.role" name="role">
+              <!-- Use friendly portal names in the dropdown -->
+              <option *ngFor="let opt of roleOptions" [value]="opt.value">
+                {{ opt.label }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.department"
+              name="department"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Employee Code</label>
+          <input
+            type="text"
+            [(ngModel)]="newUser.employeeCode"
+            name="employeeCode"
+          />
+        </div>
+        <div class="modal-actions">
           <button
-            class="btn btn-sm"
-            [class.btn-success]="user.isActive"
-            [class.btn-danger]="!user.isActive"
-            (click)="toggleActive(user)"
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeAddUserModal()"
           >
-            {{ user.isActive ? "Active" : "Inactive" }}
+            Cancel
           </button>
-        </td>
-        <td>
-          <button class="btn btn-sm btn-warning" (click)="resetPassword(user)">
-            Reset Password
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <button type="submit" class="btn btn-success">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

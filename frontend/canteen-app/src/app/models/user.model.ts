@@ -1,3 +1,4 @@
+// -------------------- Authentication --------------------
 export interface User {
   id: number;
   username: string;
@@ -33,7 +34,12 @@ export interface RegisterRequest {
   employeeCode?: string;
 }
 
-// Additional for user management
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+// -------------------- Admin User Management --------------------
 export interface UserListDto {
   id: number;
   username: string;
@@ -60,10 +66,5 @@ export interface UpdateRoleRequest {
 }
 
 export interface ResetPasswordRequest {
-  newPassword: string;
-}
-
-export interface ChangePasswordRequest {
-  currentPassword: string;
   newPassword: string;
 }

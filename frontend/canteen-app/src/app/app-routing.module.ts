@@ -9,14 +9,15 @@ import { HumanCapitalComponent } from "./components/humancapital/humancapital.co
 import { ChefComponent } from "./components/chef/chef.component";
 import { ReconciliationComponent } from "./components/reconciliation/reconciliation.component";
 import { ReportsComponent } from "./components/reports/reports.component";
-
-// Additional imports for admin components
 import { AdminUsersComponent } from "./components/admin/admin-users/admin-users.component";
 import { ChangePasswordComponent } from "./components/profile/change-password.component";
+import { ROLES } from "./models/role.model";
 
 const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
+
+  // Protected routes
   {
     path: "dashboard",
     component: DashboardComponent,
@@ -27,49 +28,50 @@ const routes: Routes = [
     path: "employee",
     component: EmployeeComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["Employee", "Admin"] },
+    data: { roles: [ROLES.EMPLOYEE, ROLES.ADMIN] },
   },
   {
     path: "humancapital",
     component: HumanCapitalComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["HumanCapital", "Admin"] },
+    data: { roles: [ROLES.HUMAN_CAPITAL, ROLES.ADMIN] },
   },
   {
     path: "chef",
     component: ChefComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["Chef", "Admin"] },
+    data: { roles: [ROLES.CHEF, ROLES.ADMIN] },
   },
   {
     path: "reconciliation",
     component: ReconciliationComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["Finance", "Admin"] },
+    data: { roles: [ROLES.FINANCE, ROLES.ADMIN] },
   },
   {
     path: "reports",
     component: ReportsComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["Finance", "Admin"] },
-  },
-  {
-    path: "**",
-    redirectTo: "/dashboard",
+    data: { roles: [ROLES.FINANCE, ROLES.ADMIN] },
   },
 
-  // Admin routes
+  // ★ Admin‑only routes ★
   {
     path: "admin/users",
     component: AdminUsersComponent,
     canActivate: [AuthGuard],
-    data: { roles: ["Admin"] },
+    data: { roles: [ROLES.ADMIN] },
   },
+
+  // User profile
   {
     path: "profile/change-password",
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
+
+  // WILDCARD – must be last
+  { path: "**", redirectTo: "/dashboard" },
 ];
 
 @NgModule({

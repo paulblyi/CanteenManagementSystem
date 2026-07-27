@@ -6,9 +6,11 @@ import {
   LoginResponse,
   RegisterRequest,
   User,
-  ChangePasswordRequest,
   UserListDto,
   CreateUserRequest,
+  ChangePasswordRequest,
+  ResetPasswordRequest,
+  UpdateRoleRequest,
 } from "../models/user.model";
 import { environment } from "../../environments/environment";
 
@@ -16,7 +18,10 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/auth`;
+  // Base URLs
+  private apiAuthUrl = `${environment.apiUrl}/auth`;
+  private apiAdminUrl = `${environment.apiUrl}/admin`;
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -27,18 +32,21 @@ export class AuthService {
     }
   }
 
+  // ---------- Authentication ----------
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
-      tap((response) => {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response));
-        this.currentUserSubject.next(response as any);
-      }),
-    );
+    return this.http
+      .post<LoginResponse>(`${this.apiAuthUrl}/login`, request)
+      .pipe(
+        tap((response) => {
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user", JSON.stringify(response));
+          this.currentUserSubject.next(response as any);
+        }),
+      );
   }
 
   register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, request);
+    return this.http.post(`${this.apiAuthUrl}/register`, request);
   }
 
   logout(): void {
@@ -47,6 +55,37 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
+  changePassword(request: ChangePasswordRequest): Observable<any> {
+    return this.http.post(`${this.apiAuthUrl}/change-password`, request);
+  }
+
+  // ---------- Admin ----------
+  getUsers(): Observable<UserListDto[]> {
+    return this.http.get<UserListDto[]>(`${this.apiAdminUrl}/users`);
+  }
+
+  createUser(user: CreateUserRequest): Observable<UserListDto> {
+    return this.http.post<UserListDto>(`${this.apiAdminUrl}/users`, user);
+  }
+
+  toggleUserActive(userId: number): Observable<any> {
+    return this.http.put(
+      `${this.apiAdminUrl}/users/${userId}/toggle-active`,
+      {},
+    );
+  }
+
+  updateUserRole(userId: number, role: string): Observable<any> {
+    return this.http.put(`${this.apiAdminUrl}/users/${userId}/role`, { role });
+  }
+
+  resetUserPassword(userId: number, newPassword: string): Observable<any> {
+    return this.http.put(`${this.apiAdminUrl}/users/${userId}/reset-password`, {
+      newPassword,
+    });
+  }
+
+  // ---------- Helpers ----------
   getToken(): string | null {
     return localStorage.getItem("token");
   }
@@ -69,36 +108,5 @@ export class AuthService {
     if (!user) return false;
     if (user.role === "Admin") return true;
     return roles.includes(user.role);
-  }
-
-  // Additional methods for user management
-  getUsers(): Observable<UserListDto[]> {
-    return this.http.get<UserListDto[]>(`${this.apiUrl}/admin/users`);
-  }
-
-  createUser(request: CreateUserRequest): Observable<UserListDto> {
-    return this.http.post<UserListDto>(`${this.apiUrl}/admin/users`, request);
-  }
-
-  toggleUserActive(userId: number): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/admin/users/${userId}/toggle-active`,
-      {},
-    );
-  }
-
-  updateUserRole(userId: number, role: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/admin/users/${userId}/role`, { role });
-  }
-
-  resetUserPassword(userId: number, newPassword: string): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/admin/users/${userId}/reset-password`,
-      { newPassword },
-    );
-  }
-
-  changePassword(request: ChangePasswordRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/profile/change-password`, request);
   }
 }

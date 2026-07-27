@@ -1,8 +1,11 @@
 <div class="employee-portal">
   <div class="portal-header">
     <h2>Employee Portal</h2>
-    <button class="btn btn-primary" (click)="showRequestForm = !showRequestForm">
-      {{ showRequestForm ? 'Cancel' : '+ Request Meal Ticket' }}
+    <button
+      class="btn btn-primary"
+      (click)="showRequestForm = !showRequestForm"
+    >
+      {{ showRequestForm ? "Cancel" : "+ Request Meal Ticket" }}
     </button>
   </div>
 
@@ -21,22 +24,35 @@
 
       <div class="form-group">
         <label>Date</label>
-        <input type="date" [(ngModel)]="request.ticketDate" name="ticketDate" required
-               [min]="today">
+        <input
+          type="date"
+          [(ngModel)]="request.ticketDate"
+          name="ticketDate"
+          required
+          [min]="today"
+        />
       </div>
 
       <div class="form-group">
         <label>Notes (Optional)</label>
-        <textarea [(ngModel)]="request.notes" name="notes" rows="2"
-                  placeholder="Any special requests?"></textarea>
+        <textarea
+          [(ngModel)]="request.notes"
+          name="notes"
+          rows="2"
+          placeholder="Any special requests?"
+        ></textarea>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-secondary" (click)="showRequestForm = false">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="showRequestForm = false"
+        >
           Cancel
         </button>
         <button type="submit" class="btn btn-primary" [disabled]="loading">
-          {{ loading ? 'Submitting...' : 'Submit Request' }}
+          {{ loading ? "Submitting..." : "Submit Request" }}
         </button>
       </div>
     </form>
@@ -46,18 +62,24 @@
   <div class="tickets-section">
     <h3>My Tickets</h3>
     <div *ngIf="loading" class="loading">Loading...</div>
-    
+
     <div *ngIf="!loading && tickets.length === 0" class="no-tickets">
       <p>You haven't requested any meal tickets yet.</p>
     </div>
 
     <div class="ticket-grid">
-      <div *ngFor="let ticket of tickets" class="ticket-card"
-           [class.cancelled]="ticket.status === 'Cancelled'"
-           [class.redeemed]="ticket.status === 'Redeemed'">
+      <div
+        *ngFor="let ticket of tickets"
+        class="ticket-card"
+        [class.cancelled]="ticket.status === 'Cancelled'"
+        [class.redeemed]="ticket.status === 'Redeemed'"
+      >
         <div class="ticket-header">
           <span class="ticket-number">{{ ticket.ticketNumber }}</span>
-          <span class="ticket-status" [style.color]="getStatusColor(ticket.status)">
+          <span
+            class="ticket-status"
+            [style.color]="getStatusColor(ticket.status)"
+          >
             {{ getStatusIcon(ticket.status) }} {{ ticket.status }}
           </span>
         </div>
@@ -83,8 +105,11 @@
           <button class="btn btn-info btn-sm" (click)="viewTicket(ticket)">
             View Details
           </button>
-          <button *ngIf="canCancel(ticket)" class="btn btn-danger btn-sm"
-                  (click)="cancelTicket(ticket.id)">
+          <button
+            *ngIf="canCancel(ticket)"
+            class="btn btn-danger btn-sm"
+            (click)="cancelTicket(ticket.id)"
+          >
             Cancel
           </button>
         </div>
@@ -110,25 +135,36 @@
         </div>
         <div class="detail-row">
           <span class="label">Date:</span>
-          <span class="value">{{ selectedTicket.ticketDate | date:'fullDate' }}</span>
+          <span class="value">{{
+            selectedTicket.ticketDate | date: "fullDate"
+          }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Status:</span>
-          <span class="value" [style.color]="getStatusColor(selectedTicket.status)">
+          <span
+            class="value"
+            [style.color]="getStatusColor(selectedTicket.status)"
+          >
             {{ selectedTicket.status }}
           </span>
         </div>
         <div class="detail-row" *ngIf="selectedTicket.requestedAt">
           <span class="label">Requested:</span>
-          <span class="value">{{ selectedTicket.requestedAt | date:'medium' }}</span>
+          <span class="value">{{
+            selectedTicket.requestedAt | date: "medium"
+          }}</span>
         </div>
         <div class="detail-row" *ngIf="selectedTicket.approvedAt">
           <span class="label">Approved:</span>
-          <span class="value">{{ selectedTicket.approvedAt | date:'medium' }}</span>
+          <span class="value">{{
+            selectedTicket.approvedAt | date: "medium"
+          }}</span>
         </div>
         <div class="detail-row" *ngIf="selectedTicket.redeemedAt">
           <span class="label">Redeemed:</span>
-          <span class="value">{{ selectedTicket.redeemedAt | date:'medium' }}</span>
+          <span class="value">{{
+            selectedTicket.redeemedAt | date: "medium"
+          }}</span>
         </div>
         <div class="detail-row" *ngIf="selectedTicket.notes">
           <span class="label">Notes:</span>

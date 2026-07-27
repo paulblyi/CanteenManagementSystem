@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { Router } from "@angular/router"; // ← add import
 import { AuthService } from "../../services/auth.service";
 
 @Component({
@@ -13,7 +14,10 @@ export class ChangePasswordComponent {
   message = "";
   success = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router, // ← inject Router
+  ) {}
 
   changePassword(): void {
     if (this.newPassword !== this.confirmPassword) {
@@ -38,11 +42,17 @@ export class ChangePasswordComponent {
           this.currentPassword = "";
           this.newPassword = "";
           this.confirmPassword = "";
+          // Optionally auto-redirect after success
+          setTimeout(() => this.router.navigate(["/dashboard"]), 2000);
         },
-        error: (err) => {
+        error: (err: any) => {
           this.message = err.error?.message || "Error changing password.";
           this.success = false;
         },
       });
+  }
+
+  goBack(): void {
+    this.router.navigate(["/dashboard"]);
   }
 }

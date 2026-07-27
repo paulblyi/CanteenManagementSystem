@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Configure PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? "Host=localhost;Database=CanteenDb;Username=postgres;Password=postgres";
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -55,7 +55,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://localhost:4200")
+            policyBuilder.WithOrigins(
+                            "http://localhost:4200",
+                            "https://d8z420x5-4200.euw.devtunnels.ms")
                          .AllowAnyHeader()
                          .AllowAnyMethod()
                          .AllowCredentials();
