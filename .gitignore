@@ -40,4 +40,6 @@ appsettings.Development.json
 *.pdb
 
 # Migrations (optional – you might want to keep them)
-# Migrations/   # uncomment to ignore generated migrations if you prefer
+# Migrations/   # uncomment to ignore generated migrations if you prefer*.tar.gz
+canteen_db_backup.tar.gz
+nodesource_setup.sh
