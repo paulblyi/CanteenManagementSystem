@@ -19,7 +19,8 @@ namespace CanteenApi.DTOs
         public string TicketNumber { get; set; } = string.Empty;
         public int? EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
-        public string Department { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;        
+        public string? DepartmentName { get; set; } = string.Empty; 
         public DateTime TicketDate { get; set; }
         public string MealType { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;

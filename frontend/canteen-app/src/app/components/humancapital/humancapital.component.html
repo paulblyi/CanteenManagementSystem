@@ -40,38 +40,31 @@
 
       <div class="form-group">
         <label>Department (Optional)</label>
-        <input
-          type="text"
-          [(ngModel)]="batchRequest.department"
-          name="batchDepartment"
-          placeholder="e.g., IT Department"
-        />
+        <select [(ngModel)]="batchRequest.departmentId" name="batchDepartment" class="form-control">
+          <option [ngValue]="null">-- All Departments --</option>
+          <option *ngFor="let dept of departments" [ngValue]="dept.id">
+            {{ dept.name }}
+          </option>
+        </select>
       </div>
 
       <div class="form-group">
         <label>Select Employees</label>
         <div class="employee-selector">
-          <!-- ★ FIX: using template reference variable #empSelect ★ -->
           <select
             #empSelect
             (change)="addEmployeeById(empSelect.value)"
             class="form-control employee-dropdown"
           >
             <option value="">-- Select Employee --</option>
-            <option *ngFor="let emp of getMockEmployees()" [value]="emp.id">
-              {{ emp.fullName }} ({{ emp.departmentName }})
+            <option *ngFor="let emp of employees" [value]="emp.id">
+              {{ emp.fullName }} ({{ emp.departmentName || 'No Department' }})
             </option>
           </select>
           <div class="selected-employees">
             <span *ngFor="let emp of selectedEmployees" class="employee-tag">
               {{ emp.fullName }}
-              <button
-                type="button"
-                class="remove-btn"
-                (click)="removeEmployee(emp)"
-              >
-                ✕
-              </button>
+              <button type="button" class="remove-btn" (click)="removeEmployee(emp)">✕</button>
             </span>
             <span *ngIf="selectedEmployees.length === 0" class="no-selection">
               No employees selected
@@ -126,7 +119,7 @@
           </div>
           <div class="ticket-details">
             <span><strong>Employee:</strong> {{ ticket.employeeName }}</span>
-            <span><strong>Department:</strong> {{ ticket.department }}</span>
+            <span><strong>Department:</strong> {{ ticket.employee?.department?.name || ticket.department || "Unknown" }}</span>
             <span><strong>Meal:</strong> {{ ticket.mealType }}</span>
             <span><strong>Date:</strong> {{ ticket.ticketDate | date }}</span>
           </div>

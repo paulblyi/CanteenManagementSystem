@@ -53,6 +53,8 @@ namespace CanteenApi.Services
         {
             var tickets = await _context.MealTickets
                 .Where(t => t.EmployeeId == employeeId)
+                    .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department) 
                 .OrderByDescending(t => t.TicketDate)
                 .ToListAsync();
 
@@ -161,6 +163,7 @@ namespace CanteenApi.Services
                 EmployeeId = ticket.EmployeeId,
                 EmployeeName = ticket.EmployeeName ?? "Unknown",
                 Department = ticket.Department ?? "Unknown",
+                DepartmentName = ticket.Employee?.Department?.Name ?? ticket.Department ?? "Unknown", // ← Current value
                 TicketDate = ticket.TicketDate,
                 MealType = ticket.MealType,
                 Status = ticket.Status,
@@ -187,6 +190,27 @@ namespace CanteenApi.Services
                 .ToListAsync();
 
             return redemptions;
+        }
+
+        public async Task<List<TicketResponseDto>> GetApprovedTicketsAsync(DateTime? date = null)
+        {
+            var query = _context.MealTickets
+                .Include(t => t.Employee)
+                    .ThenInclude(e => e.Department)
+                .Where(t => t.Status == "Approved")
+                .AsQueryable();
+
+            if (date.HasValue)
+            {
+                var dateOnly = date.Value.Date;
+                query = query.Where(t => t.TicketDate.Date == dateOnly);
+            }
+
+            var tickets = await query
+                .OrderBy(t => t.TicketNumber)
+                .ToListAsync();
+
+            return tickets.Select(MapToResponse).ToList();
         }
     }
 }

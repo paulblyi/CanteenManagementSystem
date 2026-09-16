@@ -12,6 +12,7 @@ namespace CanteenApi.Services
         Task<TicketResponseDto?> GetTicketByNumberAsync(string ticketNumber);
         Task<bool> CancelTicketAsync(int ticketId, int userId);
         Task<List<RecentRedemptionDto>> GetRecentRedemptionsAsync(int count = 10);
+        Task<List<TicketResponseDto>> GetApprovedTicketsAsync(DateTime? date = null);
 
     }
 }

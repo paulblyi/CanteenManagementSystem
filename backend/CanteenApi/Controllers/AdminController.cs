@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CanteenApi.DTOs;
 using CanteenApi.Services;
+using Microsoft.EntityFrameworkCore;
+using CanteenApi.Data;
 
 namespace CanteenApi.Controllers
 {
@@ -12,11 +14,13 @@ namespace CanteenApi.Controllers
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
     {
+        private readonly AppDbContext _context;        // ← Added
         private readonly IAuthService _authService;
 
-        public AdminController(IAuthService authService)
+        public AdminController(IAuthService authService, AppDbContext context)
         {
             _authService = authService;
+            _context = context;
         }
 
         [HttpGet("users")]
@@ -62,6 +66,31 @@ namespace CanteenApi.Controllers
             var result = await _authService.ResetUserPasswordAsync(id, request.NewPassword);
             if (!result) return NotFound();
             return Ok(new { message = "Password reset successfully." });
+        }
+
+        [Authorize(Roles = "Admin,HumanCapital")]
+        [HttpGet("employees")]
+        public async Task<IActionResult> GetEmployees()
+        {
+            var employees = await _context.Users
+                .Where(u => u.Role == "Employee" && u.IsActive)
+                .Include(u => u.Department)
+                .OrderBy(u => u.FullName)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Username,
+                    u.FullName,
+                    u.Email,
+                    u.Role,
+                    DepartmentId = u.DepartmentId,
+                    DepartmentName = u.Department != null ? u.Department.Name : null,
+                    u.IsActive,
+                    u.CreatedAt
+                })
+                .ToListAsync();
+
+            return Ok(employees);
         }
     }
 }

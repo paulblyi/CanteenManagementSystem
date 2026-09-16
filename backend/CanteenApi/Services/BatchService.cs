@@ -25,12 +25,30 @@ namespace CanteenApi.Services
             if (!employees.Any())
                 throw new InvalidOperationException("No valid employees selected.");
 
+            // Determine department name
+            string? departmentName = null;
+
+            // Prefer DepartmentId if provided    
+            if (request.DepartmentId.HasValue)
+            {
+                var dept = await _context.Departments
+                    .FirstOrDefaultAsync(d => d.Id == request.DepartmentId.Value);
+                if (dept != null)
+                    departmentName = dept.Name;
+            }
+            else if (!string.IsNullOrEmpty(request.Department))
+            {
+                // Fallback to legacy string field
+                departmentName = request.Department;
+            }
+
             // Create batch
             var batch = new Batch
             {
                 BatchNumber = GenerateBatchNumber(),
                 CreatedBy = createdBy,
-                Department = request.Department ?? employees.FirstOrDefault()?.Department?.Name,
+                // Department = request.Department ?? employees.FirstOrDefault()?.Department?.Name,
+                Department = departmentName ?? request.Department,   // fallback to old string if needed
                 TicketDate = request.TicketDate,
                 MealType = request.MealType,
                 TotalTickets = employees.Count,
@@ -67,7 +85,8 @@ namespace CanteenApi.Services
             await _context.SaveChangesAsync();
 
             // Reload batch with tickets
-            return await GetBatchByIdAsync(batch.Id) ?? throw new InvalidOperationException("Failed to create batch.");
+            return await GetBatchByIdAsync(batch.Id) 
+                ?? throw new InvalidOperationException("Failed to create batch.");
         }
 
         public async Task<List<BatchResponseDto>> GetBatchesAsync(DateTime? date = null)

@@ -13,7 +13,10 @@ RUN npm run build -- --configuration production
 
 # ---------- Runtime Stage ----------
 FROM nginx:alpine
-# COPY dist/canteen-app /usr/share/nginx/html # Not copying the build output correctly
+
+# Install bash
+RUN apk add --no-cache bash
+
 COPY --from=build /app/dist/canteen-app /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80

@@ -14,6 +14,7 @@ namespace CanteenApi.DTOs
         public List<int> EmployeeIds { get; set; } = new List<int>();
         
         public string? Department { get; set; }
+        public int? DepartmentId { get; set; } 
     }
 
     public class BatchResponseDto

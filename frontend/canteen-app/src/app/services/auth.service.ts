@@ -85,6 +85,11 @@ export class AuthService {
     });
   }
 
+  // ---------- Employees (for batch creation) ----------
+  getEmployees(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiAdminUrl}/employees`);
+  }
+
   // ---------- Helpers ----------
   getToken(): string | null {
     return localStorage.getItem("token");

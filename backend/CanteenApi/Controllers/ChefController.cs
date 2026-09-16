@@ -74,5 +74,12 @@ namespace CanteenApi.Controllers
             var redemptions = await _ticketService.GetRecentRedemptionsAsync(count);
             return Ok(redemptions);
         }
+
+        [HttpGet("approved-tickets")]
+        public async Task<IActionResult> GetApprovedTickets([FromQuery] DateTime? date = null)
+        {
+            var tickets = await _ticketService.GetApprovedTicketsAsync(date);
+            return Ok(tickets);
+        }
     }
 }

@@ -16,5 +16,6 @@ export interface BatchCreate {
   ticketDate: Date;
   mealType: string;
   employeeIds: number[];
+  departmentId?: number | null;
   department?: string;
 }

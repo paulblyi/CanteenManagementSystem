@@ -5,6 +5,9 @@ import { MealTicket, TicketApproval } from "../../models/ticket.model";
 import { Batch, BatchCreate } from "../../models/batch.model";
 import { User } from "../../models/user.model";
 import { ROLES } from "../../models/role.model";
+import { AuthService } from "src/app/services/auth.service";
+import { Department } from "src/app/models/department.model";
+import { DepartmentService } from "src/app/services/department.service";
 
 @Component({
   selector: "app-humancapital",
@@ -20,11 +23,15 @@ export class HumanCapitalComponent implements OnInit {
   selectedTicket: MealTicket | null = null;
   loading = false;
 
+  employees: User[] = [];
+  loadingEmployees = false;
+  departments: Department[] = []; // Assuming you have a Department interface defined somewhere
+
   batchRequest: BatchCreate = {
     ticketDate: new Date(),
     mealType: "Lunch",
     employeeIds: [],
-    department: "",
+    departmentId: null,
   };
 
   availableEmployees: User[] = [];
@@ -35,18 +42,30 @@ export class HumanCapitalComponent implements OnInit {
   constructor(
     private ticketService: TicketService,
     private batchService: BatchService,
+    private authService: AuthService,
+    private departmentService: DepartmentService,   // ← Add this
+
   ) {}
 
   ngOnInit(): void {
     this.loadPendingTickets();
     this.loadBatches();
+    this.loadEmployees(); 
+    this.loadDepartments();   // ← Load departments
+ 
   }
 
   loadPendingTickets(): void {
     this.loading = true;
     this.ticketService.getPendingTickets().subscribe({
       next: (data: MealTicket[]) => {
-        this.pendingTickets = data;
+        // this.pendingTickets = data;
+        this.pendingTickets = data.map(ticket => ({ 
+          ...ticket, 
+          departmentName: ticket.employee?.department?.name || ticket.department || 
+          "Unknown"
+        }));
+         
         this.loading = false;
       },
       error: (err: any) => {
@@ -64,6 +83,32 @@ export class HumanCapitalComponent implements OnInit {
       error: (err: any) => {
         console.error("Error loading batches:", err);
       },
+    });
+  }
+
+  // ---------- Load Real Employees ----------
+  loadEmployees(): void {
+    this.loadingEmployees = true;
+    this.authService.getEmployees().subscribe({
+      next: (data: User[]) => {
+        this.employees = data;
+        this.loadingEmployees = false;
+      },
+      error: (err: any) => {
+        console.error('Error loading employees:', err);
+        this.loadingEmployees = false;
+      }
+    });
+  }
+
+  loadDepartments(): void {
+    this.departmentService.getDepartments().subscribe({
+      next: (data: Department[]) => {
+        this.departments = data;
+      },
+      error: (err: any) => {
+        console.error('Error loading departments:', err);
+      }
     });
   }
 
@@ -87,27 +132,39 @@ export class HumanCapitalComponent implements OnInit {
 
   createBatch(): void {
     if (this.selectedEmployees.length === 0) {
-      alert("Please select at least one employee");
+      alert('Please select at least one employee');
       return;
     }
 
-    this.batchRequest.employeeIds = this.selectedEmployees.map((e) => e.id);
+    if (!this.batchRequest.mealType) {
+      alert('Please select a meal type');
+      return;
+    }
+
+    // Build the request with correct types
+    const request: BatchCreate = {
+      ticketDate: this.batchRequest.ticketDate || new Date(),
+      mealType: this.batchRequest.mealType,
+      employeeIds: this.selectedEmployees.map((e) => e.id),
+      departmentId: this.batchRequest.departmentId ?? null
+    };
+
+    console.log('Batch request:', request); // ← Debug log
 
     this.loading = true;
-    this.batchService.createBatch(this.batchRequest).subscribe({
+    this.batchService.createBatch(request).subscribe({
       next: (data: Batch) => {
         this.loading = false;
         this.showBatchForm = false;
         this.selectedEmployees = [];
         this.loadBatches();
-        alert(
-          `Batch created successfully! ${data.totalTickets} tickets generated.`,
-        );
+        alert(`Batch created successfully! ${data.totalTickets} tickets generated.`);
       },
       error: (err: any) => {
         this.loading = false;
-        alert(err.error?.message || "Error creating batch");
-      },
+        console.error('Batch error:', err);
+        alert(err.error?.message || 'Error creating batch');
+      }
     });
   }
 
@@ -174,7 +231,8 @@ export class HumanCapitalComponent implements OnInit {
   }
 
   addEmployeeById(id: string): void {
-    const employee = this.getMockEmployees().find((e) => e.id === +id);
+    // const employee = this.getMockEmployees().find((e) => e.id === +id);
+    const employee = this.employees.find((e) => e.id === +id);
     if (employee && !this.selectedEmployees.find((e) => e.id === employee.id)) {
       this.selectedEmployees.push(employee);
     }

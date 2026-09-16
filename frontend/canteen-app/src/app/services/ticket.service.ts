@@ -72,4 +72,12 @@ export class TicketService {
       `${this.apiUrl}/chef/recent-redemptions?count=${count}`,
     );
   }
+
+  getApprovedTickets(date?: Date): Observable<MealTicket[]> {
+    let params = '';
+    if (date) {
+      params = `?date=${date.toISOString().split('T')[0]}`;
+    }
+    return this.http.get<MealTicket[]>(`${this.apiUrl}/chef/approved-tickets${params}`);
+  }
 }

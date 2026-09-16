@@ -105,6 +105,7 @@ namespace CanteenApi.Services
         public async Task<List<UserListDto>> GetUsersAsync()
         {
             var users = await _context.Users
+                .Include(u => u.Department)
                 .OrderBy(u => u.Username)
                 .ToListAsync();
             return users.Select(u => new UserListDto
@@ -115,6 +116,7 @@ namespace CanteenApi.Services
                 Email = u.Email,
                 Role = u.Role,
                 DepartmentId = u.Department?.Id,
+                DepartmentName = u.Department?.Name, 
                 IsActive = u.IsActive,
                 CreatedAt = u.CreatedAt
             }).ToList();

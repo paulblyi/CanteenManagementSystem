@@ -1,3 +1,5 @@
+import { Department } from "./department.model";
+
 // -------------------- Authentication --------------------
 export interface User {
   id: number;
@@ -7,6 +9,7 @@ export interface User {
   role: "Employee" | "HumanCapital" | "Chef" | "Admin" | "Finance";
   departmentId?: number;
   departmentName?: string;
+  department?: Department; // ← changed to Department type
   employeeCode?: string;
   isActive: boolean;
   createdAt: Date;

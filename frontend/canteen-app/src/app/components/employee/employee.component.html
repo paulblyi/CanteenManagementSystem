@@ -94,7 +94,7 @@
           </div>
           <div class="ticket-detail">
             <span class="label">Department:</span>
-            <span class="value">{{ ticket.department }}</span>
+            <span class="value">{{ ticket.departmentName || ticket.department || 'Unknown' }}</span>
           </div>
           <div *ngIf="ticket.qrCode" class="ticket-qr">
             <span class="label">QR Code:</span>

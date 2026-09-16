@@ -1,67 +1,87 @@
 <div class="chef-portal">
   <h2>Chef Portal - Meal Redemption</h2>
 
+  <!-- Validation Section -->
   <div class="validation-section">
     <h3>Validate Ticket</h3>
     <div class="validation-form">
       <div class="form-group">
         <label>Enter Ticket Number</label>
-        <input
-          type="text"
-          [(ngModel)]="ticketNumber"
-          placeholder="e.g., TKT-20260701-ABC123"
-          (keyup.enter)="validateTicket()"
-        />
+        <input type="text" [(ngModel)]="ticketNumber"
+               placeholder="e.g., TKT-20260701-ABC123"
+               (keyup.enter)="validateTicket()">
       </div>
-      <button class="btn btn-primary" (click)="validateTicket()">
-        Validate
-      </button>
+      <button class="btn btn-primary" (click)="validateTicket()">Validate</button>
     </div>
 
     <div *ngIf="validationResult" class="validation-result">
-      <div
-        [class.valid]="validationResult.isValid"
-        [class.invalid]="!validationResult.isValid"
-      >
-        <h4>
-          {{
-            validationResult.isValid ? "✅ Valid Ticket" : "❌ Invalid Ticket"
-          }}
-        </h4>
+      <div [class.valid]="validationResult.isValid" [class.invalid]="!validationResult.isValid">
+        <h4>{{ validationResult.isValid ? '✅ Valid Ticket' : '❌ Invalid Ticket' }}</h4>
         <p>{{ validationResult.message }}</p>
         <div *ngIf="validationResult.ticket" class="ticket-info">
-          <div>
-            <strong>Employee:</strong>
-            {{ validationResult.ticket.employeeName }}
-          </div>
-          <div>
-            <strong>Meal:</strong> {{ validationResult.ticket.mealType }}
-          </div>
-          <div>
-            <strong>Department:</strong>
-            {{ validationResult.ticket.department }}
-          </div>
+          <div><strong>Employee:</strong> {{ validationResult.ticket.employeeName }}</div>
+          <div><strong>Meal:</strong> {{ validationResult.ticket.mealType }}</div>
+          <div><strong>Department:</strong> {{ validationResult.ticket.departmentName }}</div>
         </div>
-        <button
-          *ngIf="validationResult.isValid"
-          class="btn btn-success mt-20"
-          (click)="redeemTicket()"
-        >
+        <button *ngIf="validationResult.isValid"
+                class="btn btn-success mt-20"
+                (click)="redeemTicket()">
           Redeem Ticket
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Approved Tickets List -->
+  <div class="approved-tickets-section">
+    <div class="section-header">
+      <h3>Approved Tickets for {{ selectedDate | date:'fullDate' }}</h3>
+      <div class="search-bar">
+        <input type="text" [(ngModel)]="searchTerm" (input)="filterTickets()"
+               placeholder="🔍 Search by ticket, employee, department...">
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading">Loading...</div>
+
+    <div *ngIf="!loading && filteredTickets.length === 0" class="empty-state">
+      No approved tickets for this date.
+    </div>
+
+    <div class="tickets-list" *ngIf="!loading && filteredTickets.length > 0">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>Ticket #</th>
+            <th>Employee</th>
+            <th>Department</th>
+            <th>Meal</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of filteredTickets" (click)="selectTicket(ticket)">
+            <td>{{ ticket.ticketNumber }}</td>
+            <td>{{ ticket.employeeName }}</td>
+            <td>{{ ticket.departmentName || ticket.department }}</td>
+            <td>{{ ticket.mealType }}</td>
+            <td>
+              <button class="btn btn-sm btn-info" (click)="selectTicket(ticket)">Select</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Redemptions -->
   <div class="recent-redemptions">
     <h3>Recent Redemptions</h3>
-    <div *ngIf="recentRedemptions.length === 0" class="empty-state">
-      No recent redemptions
-    </div>
+    <div *ngIf="recentRedemptions.length === 0" class="empty-state">No recent redemptions</div>
     <div *ngFor="let redemption of recentRedemptions" class="redemption-item">
       <span class="ticket-number">{{ redemption.ticketNumber }}</span>
       <span class="employee">{{ redemption.employeeName }}</span>
-      <span class="time">{{ redemption.redeemedAt | date: "short" }}</span>
+      <span class="time">{{ redemption.redeemedAt | date:'short' }}</span>
     </div>
   </div>
 </div>
